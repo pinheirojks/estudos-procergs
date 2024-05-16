@@ -14,7 +14,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-//http://localhost:8080/q/swagger-ui
+//http://localhost:8080/apidocs
 
 @Path("/usuario")
 @Produces(MediaType.APPLICATION_JSON)
