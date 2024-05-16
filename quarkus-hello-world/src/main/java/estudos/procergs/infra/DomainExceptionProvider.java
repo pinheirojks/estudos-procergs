@@ -4,7 +4,7 @@ package estudos.procergs.infra;
 // import javax.ws.rs.core.Response.StatusType;
 // import javax.ws.rs.ext.Provider;
 
-import jakarta.ws.rs.WebApplicationException;
+//import jakarta.ws.rs.WebApplicationException;
 
 
 //@Provider

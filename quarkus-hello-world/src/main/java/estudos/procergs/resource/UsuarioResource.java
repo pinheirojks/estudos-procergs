@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.modelmapper.ModelMapper;
 
 import estudos.procergs.dto.UsuarioDTO;
 import estudos.procergs.entity.Usuario;
@@ -29,18 +30,22 @@ public class UsuarioResource {
     @Inject
     private UsuarioService usuarioService;
 
+    private ModelMapper mapper = new ModelMapper();
+
     @GET
     @Operation(description = "Lista todos os usuários")
     public List<UsuarioDTO> listaTodos() {
         return usuarioService.listaTodos().stream()
-            .map(UsuarioDTO::new)
+            .map(u -> mapper.map(u, UsuarioDTO.class))
             .toList();
     }
 
     @POST
-    public Response criarNovo(Usuario u) {
+    @Operation(description = "Cria um novo usuário")
+    public Response criarNovo(UsuarioDTO dto) {
         try {
-            UsuarioDTO dto = new UsuarioDTO(usuarioService.criar(u));
+            var usuario = usuarioService.criar(mapper.map(dto, Usuario.class));
+            dto = mapper.map(usuario, UsuarioDTO.class);
             return Response.ok(dto).status(200).build();
             
         } catch (WebApplicationException e) {

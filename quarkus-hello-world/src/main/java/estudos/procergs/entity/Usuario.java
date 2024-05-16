@@ -1,6 +1,5 @@
 package estudos.procergs.entity;
 
-import estudos.procergs.dto.UsuarioDTO;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -9,19 +8,35 @@ import jakarta.persistence.Table;
 @Table(name = "usuario")
 public class Usuario extends PanacheEntity {
 
-    public String login;
+    private String login;
 
-    public String senha;
+    private String senha;
 
-    public Boolean ativo;
+    private Boolean ativo;
 
-    public Usuario() {
+    public String getLogin() {
+        return login;
     }
 
-    public Usuario(UsuarioDTO dto) {
-        this.id = dto.id;
-        this.login = dto.login;
-        this.senha = dto.senha;
-        this.ativo = dto.ativo;
+    public void setLogin(String login) {
+        this.login = login;
     }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    
 }

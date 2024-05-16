@@ -1,23 +1,45 @@
 package estudos.procergs.dto;
 
-import estudos.procergs.entity.Usuario;
-
 public class UsuarioDTO {
-    public Long id;
+    private Long id;
 
-    public String login;
+    private String login;
 
-    public String senha;
+    private String senha;
 
-    public Boolean ativo;
+    private Boolean ativo;
 
-    public UsuarioDTO() {
+    public Long getId() {
+        return id;
     }
 
-    public UsuarioDTO(Usuario u) {
-        this.id = u.id;
-        this.login = u.login;
-        this.senha = u.senha;
-        this.ativo = u.ativo;
+    public void setId(Long id) {
+        this.id = id;
     }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    
 }

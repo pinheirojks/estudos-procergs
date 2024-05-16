@@ -1,6 +1,7 @@
 package estudos.procergs.service;
 
 import java.util.List;
+
 import estudos.procergs.entity.Usuario;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.transaction.Transactional;
@@ -15,13 +16,13 @@ public class UsuarioService {
 
     @Transactional
     public Usuario criar(Usuario u) {
-        if (u.login == null) {
+        if (u.getLogin() == null) {
             throw new WebApplicationException("Informe o login.");
         }
-        if (u.senha == null) {
+        if (u.getSenha() == null) {
             throw new WebApplicationException("Informe a senha.");
         }
-        u.ativo = true;
+        u.setAtivo(true);
         u.persist();
         return u;
     }
