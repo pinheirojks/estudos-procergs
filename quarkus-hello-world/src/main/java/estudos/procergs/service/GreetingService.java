@@ -1,4 +1,4 @@
-package estudos.procergs;
+package estudos.procergs.service;
 
 import jakarta.enterprise.context.RequestScoped;
 
