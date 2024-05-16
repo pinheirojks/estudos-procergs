@@ -1,0 +1,10 @@
+insert into pessoa(id, first_name, last_name, salutation) values (1, 'Doro', 'Pesch', 'Mrs');
+insert into pessoa(id, first_name, last_name, salutation) values (2, 'Bobby', 'Brown', 'Mr');
+insert into pessoa(id, first_name, last_name, salutation) values (3, 'Curt', 'Cobain', 'Mr');
+insert into pessoa(id, first_name, last_name, salutation) values (4, 'Nina', 'Hagen', 'Mrs');
+insert into pessoa(id, first_name, last_name, salutation) values (5, 'Jimmi', 'Henrix', 'Mr');
+insert into pessoa(id, first_name, last_name, salutation) values (6, 'Janis', 'Joplin', 'Mrs');
+insert into pessoa(id, first_name, last_name, salutation) values (7, 'Joe', 'Cocker', 'Mr');
+insert into pessoa(id, first_name, last_name, salutation) values (8, 'Alice', 'Cooper', 'Mr');
+insert into pessoa(id, first_name, last_name, salutation) values (9, 'Bruce', 'Springsteen', 'Mr');
+insert into pessoa(id, first_name, last_name, salutation) values (10, 'Eric', 'Clapton', 'Mr');
