@@ -12,7 +12,7 @@ public class Usuario extends PanacheEntity {
 
     public String senha;
 
-    public boolean ativo = true;
+    public Boolean ativo;
 
 
 }
