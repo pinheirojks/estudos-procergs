@@ -72,7 +72,7 @@ public class UsuarioResource {
     @DELETE
     @Path("{id}")
     @Operation(description = "Exclui um usuário")
-    public void excluir(@PathParam("id") Long id, UsuarioDTO dto) {     
+    public void excluir(@PathParam("id") Long id) {     
         usuarioService.excluir(id);
     }
 }
