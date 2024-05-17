@@ -1,6 +1,7 @@
 package estudos.procergs.dto;
 
 public class UsuarioDTO {
+    
     private Long id;
 
     private String login;
