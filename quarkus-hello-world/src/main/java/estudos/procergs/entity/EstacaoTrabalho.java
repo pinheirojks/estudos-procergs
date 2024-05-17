@@ -12,7 +12,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "estacao_trabalho")
 public class EstacaoTrabalho extends PanacheEntity {
@@ -26,21 +30,5 @@ public class EstacaoTrabalho extends PanacheEntity {
     private TipoEstacaoTrabalhoEnum tipo;
 
     private Boolean ativo;
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
 
 }
