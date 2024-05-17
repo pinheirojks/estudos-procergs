@@ -22,8 +22,7 @@ public class UsuarioService {
         
         if (pesq.getLogin() != null) {
             restricoes.add("login like :login");
-            String login = String.format("%%s%", pesq.getLogin());
-            parametros.put("login", login);
+            parametros.put("login", "%" + pesq.getLogin() + "%");
         }        
         if (pesq.getAtivo() != null) {
             restricoes.add("ativo = :ativo");
@@ -33,7 +32,8 @@ public class UsuarioService {
             .collect(Collectors.joining(" and "));
 
 		Sort ordenacao = Sort.ascending("ativo", "login");
-		PanacheQuery<Usuario> query = Usuario.find(stringRestricoes, parametros, ordenacao);
+		PanacheQuery<Usuario> query = Usuario.find(stringRestricoes, ordenacao, parametros);
+        
         return query.list();
     }
 
