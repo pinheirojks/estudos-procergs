@@ -15,15 +15,15 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Usuario criar(Usuario u) {
-        if (u.getLogin() == null) {
+    public Usuario criar(Usuario usuario) {
+        if (usuario.getLogin() == null) {
             throw new WebApplicationException("Informe o login.");
         }
-        if (u.getSenha() == null) {
+        if (usuario.getSenha() == null) {
             throw new WebApplicationException("Informe a senha.");
         }
-        u.setAtivo(true);
-        u.persist();
-        return u;
+        usuario.setAtivo(true);
+        usuario.persist();
+        return usuario;
     }
 }

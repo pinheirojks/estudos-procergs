@@ -15,9 +15,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 
 //http://localhost:8080/apidocs
 
@@ -42,14 +40,9 @@ public class UsuarioResource {
 
     @POST
     @Operation(description = "Cria um novo usuário")
-    public Response criarNovo(UsuarioDTO dto) {
-        try {
-            var usuario = usuarioService.criar(mapper.map(dto, Usuario.class));
-            dto = mapper.map(usuario, UsuarioDTO.class);
-            return Response.ok(dto).status(200).build();
-            
-        } catch (WebApplicationException e) {
-            return Response.status(400).entity(e.getMessage()).build();
-        }        
+    public UsuarioDTO criar(UsuarioDTO dto) {        
+        Usuario usuario = mapper.map(dto, Usuario.class);
+        usuario = usuarioService.criar(usuario);
+        return mapper.map(usuario, UsuarioDTO.class);
     }
 }
