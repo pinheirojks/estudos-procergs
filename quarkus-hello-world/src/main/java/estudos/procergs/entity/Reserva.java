@@ -2,8 +2,6 @@ package estudos.procergs.entity;
 
 import java.time.LocalDate;
 
-import javax.swing.text.StyledEditorKit.BoldAction;
-
 import estudos.procergs.enums.TipoReservaEnum;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
