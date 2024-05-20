@@ -24,5 +24,4 @@ public enum TipoEstacaoTrabalhoEnum {
                         .findFirst()
                         .orElse(null);
     }
-
 }

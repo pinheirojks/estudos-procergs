@@ -17,26 +17,35 @@ import jakarta.ws.rs.WebApplicationException;
 public class UsuarioService {
 
     public List<Usuario> listar(Usuario pesq) {
-        List<String> restricoes = new ArrayList<>();
+        // Stream<Usuario> usuarios = Usuario.findAll(Sort.ascending("login")).stream();
+        // if (pesq.getLogin() != null) {
+        // usuarios.filter(u -> !u.getLogin().contains(pesq.getLogin()));
+        // }
+        // if (pesq.getAtivo() != null) {
+        // usuarios.filter(u -> !u.getAtivo().equals(pesq.getAtivo()));
+        // }
+        // return usuarios.toList();
+
+        List<String> clausulas = new ArrayList<>();
         Map<String, Object> parametros = new HashMap<String, Object>();
-        
+
         if (pesq.getLogin() != null) {
-            restricoes.add("login like :login");
+            clausulas.add("login like :login");
             parametros.put("login", "%" + pesq.getLogin() + "%");
-        }        
+        }
         if (pesq.getAtivo() != null) {
-            restricoes.add("ativo = :ativo");
+            clausulas.add("ativo = :ativo");
             parametros.put("ativo", pesq.getAtivo());
         }
-        String stringRestricoes = restricoes.stream()
-            .collect(Collectors.joining(" and "));
+        String restricoes = clausulas.stream()
+                .collect(Collectors.joining(" and "));
 
-		Sort ordenacao = Sort.ascending("ativo", "login");
-		PanacheQuery<Usuario> query = Usuario.find(stringRestricoes, ordenacao, parametros);
-        
+        Sort ordenacao = Sort.ascending("login");
+        PanacheQuery<Usuario> query = Usuario.find(restricoes, ordenacao, parametros);
+
         return query.list();
     }
-
+    
     public Usuario consultar(Long id) {
         return Usuario.findById(id);
     }

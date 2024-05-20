@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-
 import estudos.procergs.enums.TipoEstacaoTrabalhoEnum;
 
 public class TipoEstacaoTrabalhoDeserializer extends StdDeserializer<TipoEstacaoTrabalhoEnum> {
@@ -16,11 +15,8 @@ public class TipoEstacaoTrabalhoDeserializer extends StdDeserializer<TipoEstacao
     }
 
     @Override
-    public TipoEstacaoTrabalhoEnum deserialize(JsonParser jp, DeserializationContext dc) throws IOException, JacksonException {
-        
+    public TipoEstacaoTrabalhoEnum deserialize(JsonParser jp, DeserializationContext dc) throws IOException, JacksonException {        
             String dataString = jp.readValueAs(String.class);
-
             return TipoEstacaoTrabalhoEnum.parseByName(dataString);
     }
-
 }

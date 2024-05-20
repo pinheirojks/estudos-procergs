@@ -11,7 +11,8 @@ import jakarta.ws.rs.core.MediaType;
 public class GreetingResource {
 
     @Inject
-    GreetingService service;
+    private GreetingService service;
+    
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String hello() {
