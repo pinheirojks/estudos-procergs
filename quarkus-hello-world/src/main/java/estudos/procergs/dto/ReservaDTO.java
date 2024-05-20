@@ -18,4 +18,6 @@ public class ReservaDTO {
     private LocalDate data;
 
     private TipoReservaDTO tipo;
+
+    private Boolean cancelada;
 }

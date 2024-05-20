@@ -18,4 +18,6 @@ public class ReservaPesq {
     private LocalDate dataFim;
 
     private String nomeTipo;
+
+    private Boolean cancelada;
 }

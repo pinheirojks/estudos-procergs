@@ -22,4 +22,7 @@ public class ReservaPesqDTO {
 
     @QueryParam(value = "nomeTipo")
     private String nomeTipo;
+
+    @QueryParam(value = "cancelada")
+    private Boolean cancelada;
 }

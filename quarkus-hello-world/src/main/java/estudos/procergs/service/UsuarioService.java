@@ -17,14 +17,6 @@ import jakarta.ws.rs.WebApplicationException;
 public class UsuarioService {
 
     public List<Usuario> listar(Usuario pesq) {
-        // Stream<Usuario> usuarios = Usuario.findAll(Sort.ascending("login")).stream();
-        // if (pesq.getLogin() != null) {
-        // usuarios.filter(u -> !u.getLogin().contains(pesq.getLogin()));
-        // }
-        // if (pesq.getAtivo() != null) {
-        // usuarios.filter(u -> !u.getAtivo().equals(pesq.getAtivo()));
-        // }
-        // return usuarios.toList();
 
         List<String> clausulas = new ArrayList<>();
         Map<String, Object> parametros = new HashMap<String, Object>();

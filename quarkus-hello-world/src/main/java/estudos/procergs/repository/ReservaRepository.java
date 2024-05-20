@@ -49,6 +49,9 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
         if (Objects.nonNull(pesq.getDataFim())) {
             criteria.where(builder.lessThanOrEqualTo(reserva.get("dataFim"), pesq.getDataFim()));
         }  
+        if (Objects.nonNull(pesq.getCancelada())) {
+            criteria.where(builder.equal(reserva.get("cancelada"), pesq.getCancelada()));
+        }  
         List<Order> ordens = new ArrayList<>();
         ordens.add(builder.asc(usuario.get("login")));
         ordens.add(builder.asc(reserva.get("data")));

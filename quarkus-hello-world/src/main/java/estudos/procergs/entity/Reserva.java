@@ -2,6 +2,8 @@ package estudos.procergs.entity;
 
 import java.time.LocalDate;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import estudos.procergs.enums.TipoReservaEnum;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
@@ -39,5 +41,7 @@ public class Reserva extends PanacheEntityBase {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo", columnDefinition = "varchar(30)")
     private TipoReservaEnum tipo;
+
+    private Boolean cancelada;
 
 }
