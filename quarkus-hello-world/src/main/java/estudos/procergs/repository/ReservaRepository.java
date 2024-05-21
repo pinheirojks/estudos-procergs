@@ -15,6 +15,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Root;
@@ -28,50 +29,15 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
     public List<Reserva> listar(ReservaPesq pesq) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Reserva> criteria = builder.createQuery(Reserva.class);
-
         Root<Reserva> reserva = criteria.from(Reserva.class);
-        Join<Reserva, Usuario> usuario = reserva.join("usuario");
-        Join<Reserva, EstacaoTrabalho> estacao = reserva.join("estacaoTrabalho");
 
-        criteria = criteria.select(reserva);
-
-        if (Objects.nonNull(pesq.getIdUsuario())) {
-            criteria.where(builder.equal(usuario.get("id"), pesq.getIdUsuario()));
-        }
-        if (Objects.nonNull(pesq.getIdEstacaoTrabalho())) {
-            criteria.where(builder.equal(estacao.get("id"), pesq.getIdEstacaoTrabalho()));
-        }
-        if (Objects.nonNull(pesq.getNomeTipo())) {
-            criteria.where(builder.equal(reserva.get("tipo"), pesq.getNomeTipo()));
-        }
-        if (Objects.nonNull(pesq.getDataInicio())) {
-            criteria.where(builder.greaterThanOrEqualTo(reserva.get("dataInicio"), pesq.getDataInicio()));
-        }
-        if (Objects.nonNull(pesq.getDataFim())) {
-            criteria.where(builder.lessThanOrEqualTo(reserva.get("dataFim"), pesq.getDataFim()));
-        }
-        if (Objects.nonNull(pesq.getCancelada())) {
-            criteria.where(builder.equal(reserva.get("cancelada"), pesq.getCancelada()));
-        }
-        
-        List<Order> ordens = new ArrayList<>();
-        if (pesq.getSentidoOrdenacao().equalsIgnoreCase("ASC")) {
-            ordens.add(builder.asc(reserva.get(pesq.getCampoOrdenacao())));
-        } else {
-            ordens.add(builder.desc(reserva.get(pesq.getCampoOrdenacao())));
-        }
-        ordens.add(builder.asc(reserva.get("data")));
-        ordens.add(builder.asc(usuario.get("login")));
-
-        criteria.orderBy(ordens);
+        criteria.select(reserva);
+        this.montarRestricoes(pesq, builder, reserva).stream()
+            .forEach(restricao -> criteria.where(restricao));
+        criteria.orderBy(this.montarOrdens(pesq, builder, reserva));
 
         TypedQuery<Reserva> query = entityManager.createQuery(criteria);
-
-        if (pesq.getTamanhoPagina().compareTo(Integer.valueOf(0)) > 0 && pesq.getNumeroPagina().compareTo(Integer.valueOf(0)) > 0) {
-            query.setMaxResults(pesq.getTamanhoPagina());
-            query.setFirstResult((pesq.getNumeroPagina() - 1) * pesq.getTamanhoPagina());
-        }
-
+        query = this.montarPaginacao(pesq, query);
         return query.getResultList();
     }
 
@@ -82,27 +48,56 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
         Root<Reserva> reserva = criteria.from(Reserva.class);
         criteria.select(builder.count(reserva));
 
+        this.montarRestricoes(pesq, builder, reserva).stream()
+            .forEach(restricao -> criteria.where(restricao));        
+        return entityManager.createQuery(criteria).getSingleResult();
+    }
+
+    private List<Expression<Boolean>> montarRestricoes(ReservaPesq pesq, CriteriaBuilder builder, Root<Reserva> reserva) {
+        List<Expression<Boolean>> restricoes = new ArrayList<>();
         Join<Reserva, Usuario> usuario = reserva.join("usuario");
         Join<Reserva, EstacaoTrabalho> estacao = reserva.join("estacaoTrabalho");
 
         if (Objects.nonNull(pesq.getIdUsuario())) {
-            criteria.where(builder.equal(usuario.get("id"), pesq.getIdUsuario()));
+            restricoes.add(builder.equal(usuario.get("id"), pesq.getIdUsuario()));
         }
         if (Objects.nonNull(pesq.getIdEstacaoTrabalho())) {
-            criteria.where(builder.equal(estacao.get("id"), pesq.getIdEstacaoTrabalho()));
+            restricoes.add(builder.equal(estacao.get("id"), pesq.getIdEstacaoTrabalho()));
         }
         if (Objects.nonNull(pesq.getNomeTipo())) {
-            criteria.where(builder.equal(reserva.get("tipo"), pesq.getNomeTipo()));
+            restricoes.add(builder.equal(reserva.get("tipo"), pesq.getNomeTipo()));
         }
         if (Objects.nonNull(pesq.getDataInicio())) {
-            criteria.where(builder.greaterThanOrEqualTo(reserva.get("dataInicio"), pesq.getDataInicio()));
+            restricoes.add(builder.greaterThanOrEqualTo(reserva.get("dataInicio"), pesq.getDataInicio()));
         }
         if (Objects.nonNull(pesq.getDataFim())) {
-            criteria.where(builder.lessThanOrEqualTo(reserva.get("dataFim"), pesq.getDataFim()));
+            restricoes.add(builder.lessThanOrEqualTo(reserva.get("dataFim"), pesq.getDataFim()));
         }
         if (Objects.nonNull(pesq.getCancelada())) {
-            criteria.where(builder.equal(reserva.get("cancelada"), pesq.getCancelada()));
+            restricoes.add(builder.equal(reserva.get("cancelada"), pesq.getCancelada()));
         }
-        return entityManager.createQuery(criteria).getSingleResult();
+        return restricoes;
+    }
+
+    private List<Order> montarOrdens(ReservaPesq pesq, CriteriaBuilder builder, Root<Reserva> reserva) {
+        List<Order> ordens = new ArrayList<>();
+        Join<Reserva, Usuario> usuario = reserva.join("usuario");
+
+        if (pesq.getSentidoOrdenacao().equalsIgnoreCase("ASC")) {
+            ordens.add(builder.asc(reserva.get(pesq.getCampoOrdenacao())));
+        } else {
+            ordens.add(builder.desc(reserva.get(pesq.getCampoOrdenacao())));
+        }
+        ordens.add(builder.asc(reserva.get("data")));
+        ordens.add(builder.asc(usuario.get("login")));
+        return ordens;
+    }
+
+    private TypedQuery<Reserva> montarPaginacao(ReservaPesq pesq, TypedQuery<Reserva> query) {
+        if (pesq.getTamanhoPagina().compareTo(Integer.valueOf(0)) > 0 && pesq.getNumeroPagina().compareTo(Integer.valueOf(0)) > 0) {
+            query.setMaxResults(pesq.getTamanhoPagina());
+            query.setFirstResult((pesq.getNumeroPagina() - 1) * pesq.getTamanhoPagina());
+        }
+        return query;
     }
 }
