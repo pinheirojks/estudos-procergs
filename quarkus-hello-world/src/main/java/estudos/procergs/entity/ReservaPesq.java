@@ -20,4 +20,12 @@ public class ReservaPesq {
     private String nomeTipo;
 
     private Boolean cancelada;
+
+    private Integer numeroPagina;
+
+    private Integer tamanhoPagina;
+
+    private String campoOrdenacao;
+
+    private String sentidoOrdenacao;
 }
