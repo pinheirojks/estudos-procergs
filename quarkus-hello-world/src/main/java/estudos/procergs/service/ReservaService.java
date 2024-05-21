@@ -5,6 +5,7 @@ import java.util.List;
 
 import estudos.procergs.entity.EstacaoTrabalho;
 import estudos.procergs.entity.Reserva;
+import estudos.procergs.entity.ReservaPagina;
 import estudos.procergs.entity.ReservaPesq;
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.TipoReservaEnum;
@@ -20,8 +21,13 @@ public class ReservaService {
     @Inject
     private ReservaRepository repository;
 
-    public List<Reserva> listar(ReservaPesq pesq) {
-        return repository.listar(pesq);
+    public ReservaPagina listar(ReservaPesq pesq) {
+        ReservaPagina pagina = new ReservaPagina();
+        pagina.setReservas(repository.listar(pesq));
+        pagina.setQuantidadeRegistros(repository.contar(pesq));
+        pagina.setNumeroPagina(pesq.getNumeroPagina());
+        pagina.setTamanhoPagina(pesq.getTamanhoPagina());
+        return pagina;
     }
 
     public Reserva consultar(Long id) {

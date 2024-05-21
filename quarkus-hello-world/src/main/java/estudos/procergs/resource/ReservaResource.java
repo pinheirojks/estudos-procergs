@@ -1,15 +1,15 @@
 package estudos.procergs.resource;
 
-import java.util.List;
-
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 import estudos.procergs.dto.ReservaDTO;
+import estudos.procergs.dto.ReservaPaginaDTO;
 import estudos.procergs.dto.ReservaPesqDTO;
 import estudos.procergs.entity.Reserva;
+import estudos.procergs.entity.ReservaPagina;
 import estudos.procergs.entity.ReservaPesq;
-import estudos.procergs.parser.ReservaMapper;
+import estudos.procergs.mapper.ReservaMapper;
 import estudos.procergs.service.ReservaService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
@@ -34,12 +34,11 @@ public class ReservaResource {
     private ReservaMapper reservaMapper = new ReservaMapper();
 
     @GET
-    @Operation(description = "Lista os usuários pesquisando por login e ativo")
-    public List<ReservaDTO> listar(@BeanParam ReservaPesqDTO pesqDTO) {
+    @Operation(description = "Lista com paginação os usuários pesquisando por diversos campos")
+    public ReservaPaginaDTO listar(@BeanParam ReservaPesqDTO pesqDTO) {
         ReservaPesq pesq = reservaMapper.paraPesquisa(pesqDTO);
-        return reservaService.listar(pesq).stream()
-                .map(reserva -> reservaMapper.paraDTO(reserva))
-                .toList();
+        ReservaPagina pagina = reservaService.listar(pesq);
+        return reservaMapper.paraDTO(pagina);
     }
 
     @GET

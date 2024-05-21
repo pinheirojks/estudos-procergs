@@ -35,7 +35,7 @@ public class ReservaPesqDTO {
     @QueryParam(value = "tamanhoPagina")
     private Integer tamanhoPagina;
 
-    @DefaultValue("descricao")
+    @DefaultValue("data")
     @QueryParam("campoOrdenacao")
     private String campoOrdenacao;
 

@@ -1,11 +1,15 @@
-package estudos.procergs.parser;
+package estudos.procergs.mapper;
+
+import java.util.List;
 
 import org.modelmapper.ModelMapper;
 
 import estudos.procergs.dto.ReservaDTO;
+import estudos.procergs.dto.ReservaPaginaDTO;
 import estudos.procergs.dto.ReservaPesqDTO;
 import estudos.procergs.dto.TipoReservaDTO;
 import estudos.procergs.entity.Reserva;
+import estudos.procergs.entity.ReservaPagina;
 import estudos.procergs.entity.ReservaPesq;
 import estudos.procergs.enums.TipoReservaEnum;
 
@@ -27,5 +31,14 @@ public class ReservaMapper {
 
     public ReservaPesq paraPesquisa(ReservaPesqDTO dto) {
         return mapper.map(dto, ReservaPesq.class);
+    }
+
+    public ReservaPaginaDTO paraDTO(ReservaPagina pagina) {
+        ReservaPaginaDTO dto = mapper.map(pagina, ReservaPaginaDTO.class);
+        List<ReservaDTO> reservasDTO = pagina.getReservas().stream()
+            .map(r -> this.paraDTO(r))
+            .toList();
+        dto.setReservas(reservasDTO);
+        return dto;
     }
 }

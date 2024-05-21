@@ -1,4 +1,4 @@
-package estudos.procergs.entity;
+package estudos.procergs.dto;
 
 import java.util.List;
 
@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class ReservaPagina {
+public class ReservaPaginaDTO {
 
-    private List<Reserva> reservas;
+    private List<ReservaDTO> reservas;
 
     private Long quantidadeRegistros;
 
