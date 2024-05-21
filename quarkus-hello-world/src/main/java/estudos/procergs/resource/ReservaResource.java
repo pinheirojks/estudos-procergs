@@ -4,14 +4,12 @@ import java.util.List;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.modelmapper.ModelMapper;
 
 import estudos.procergs.dto.ReservaDTO;
 import estudos.procergs.dto.ReservaPesqDTO;
-import estudos.procergs.dto.TipoReservaDTO;
 import estudos.procergs.entity.Reserva;
 import estudos.procergs.entity.ReservaPesq;
-import estudos.procergs.enums.TipoReservaEnum;
+import estudos.procergs.parser.ReservaMapper;
 import estudos.procergs.service.ReservaService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
@@ -33,18 +31,14 @@ public class ReservaResource {
     @Inject
     private ReservaService reservaService;
 
-    private ModelMapper mapper = new ModelMapper();
+    private ReservaMapper reservaMapper = new ReservaMapper();
 
     @GET
     @Operation(description = "Lista os usuários pesquisando por login e ativo")
     public List<ReservaDTO> listar(@BeanParam ReservaPesqDTO pesqDTO) {
-        ReservaPesq pesq = mapper.map(pesqDTO, ReservaPesq.class);
+        ReservaPesq pesq = reservaMapper.paraPesquisa(pesqDTO);
         return reservaService.listar(pesq).stream()
-                .map(reserva -> {
-                    ReservaDTO dto = mapper.map(reserva, ReservaDTO.class);
-                    dto.setTipo(new TipoReservaDTO(reserva.getTipo().name(), reserva.getTipo().getDescricao()));
-                    return dto;
-                })
+                .map(reserva -> reservaMapper.paraDTO(reserva))
                 .toList();
     }
 
@@ -53,34 +47,24 @@ public class ReservaResource {
     @Operation(description = "Consulta uma reserva pelo seu ID")
     public ReservaDTO consultar(@PathParam("id") Long id) {
         Reserva reserva = reservaService.consultar(id);
-        ReservaDTO dto = mapper.map(reserva, ReservaDTO.class);
-        dto.setTipo(new TipoReservaDTO(reserva.getTipo().name(), reserva.getTipo().getDescricao()));
-        return dto;
+        return reservaMapper.paraDTO(reserva);
     }
 
     @POST
     @Operation(description = "Cria uma nova reserva")
     public ReservaDTO incluir(ReservaDTO dto) {
-
-        Reserva reserva = mapper.map(dto, Reserva.class);
-        reserva.setTipo(TipoReservaEnum.parseByName(dto.getTipo().getNome()));
+        Reserva reserva = reservaMapper.paraReserva(dto);
         reserva = reservaService.incluir(reserva);
-        dto = mapper.map(reserva, ReservaDTO.class);
-        dto.setTipo(new TipoReservaDTO(reserva.getTipo().name(), reserva.getTipo().getDescricao()));
-        return dto;
+        return reservaMapper.paraDTO(reserva);
     }
 
     @PUT
     @Path("{id}")
     @Operation(description = "Altera uma reserva")
     public ReservaDTO alterar(@PathParam("id") Long id, ReservaDTO dto) {
-
-        Reserva reserva = mapper.map(dto, Reserva.class);
-        reserva.setTipo(TipoReservaEnum.parseByName(dto.getTipo().getNome()));
+        Reserva reserva = reservaMapper.paraReserva(dto);
         reserva = reservaService.alterar(id, reserva);
-        dto = mapper.map(reserva, ReservaDTO.class);
-        dto.setTipo(new TipoReservaDTO(reserva.getTipo().name(), reserva.getTipo().getDescricao()));
-        return dto;
+        return reservaMapper.paraDTO(reserva);
     }
 
     @PUT

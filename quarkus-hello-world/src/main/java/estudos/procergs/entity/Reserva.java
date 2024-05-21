@@ -16,8 +16,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @Entity
 @Table(name = "reserva")
 public class Reserva extends PanacheEntityBase {
@@ -41,5 +41,4 @@ public class Reserva extends PanacheEntityBase {
     private TipoReservaEnum tipo;
 
     private Boolean cancelada;
-
 }

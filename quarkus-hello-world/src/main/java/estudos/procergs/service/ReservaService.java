@@ -45,14 +45,7 @@ public class ReservaService {
         reserva.setCancelada(false);
         repository.persist(reserva);
 
-        reserva = repository.findById(reserva.getId());
-
         return reserva;
-    }
-
-    private void complementar(Reserva reserva) {
-        reserva.setUsuario(Usuario.findById(reserva.getUsuario().id));
-        reserva.setEstacaoTrabalho(EstacaoTrabalho.findById(reserva.getEstacaoTrabalho().id));
     }
 
     @Transactional
@@ -79,16 +72,9 @@ public class ReservaService {
         return reserva;
     }
 
-    private void proibirReagendamento(Reserva r) {
-        List<Reserva> reservasAtivasDaData = this.listarReservasAtivasDaData(r.getData());
-        this.proibirReagendamentoEstacao(r, reservasAtivasDaData);
-        this.proibirReagendamentoUsuario(r, reservasAtivasDaData);
-    }
-
-    private List<Reserva> listarReservasAtivasDaData(LocalDate data) {
-        return repository.list("data", data).stream()
-        .filter(re -> !re.getCancelada()) 
-        .toList() ;
+    private void complementar(Reserva reserva) {
+        reserva.setUsuario(Usuario.findById(reserva.getUsuario().id));
+        reserva.setEstacaoTrabalho(EstacaoTrabalho.findById(reserva.getEstacaoTrabalho().id));
     }
 
     @Transactional
@@ -145,14 +131,26 @@ public class ReservaService {
         } 
     }
 
+    private void proibirReagendamento(Reserva r) {
+        List<Reserva> reservasAtivasDaData = this.listarReservasAtivasDaData(r.getData());
+        this.proibirReagendamentoEstacao(r, reservasAtivasDaData);
+        this.proibirReagendamentoUsuario(r, reservasAtivasDaData);
+    }
+
+    private List<Reserva> listarReservasAtivasDaData(LocalDate data) {
+        return repository.list("data", data).stream()
+        .filter(re -> !re.getCancelada()) 
+        .toList() ;
+    }
+
     private void proibirReagendamentoEstacao(Reserva reserva, List<Reserva> reservasAtivasDaData) {
         reservasAtivasDaData.stream()     
             .filter(r -> r.getEstacaoTrabalho().id.equals(reserva.getEstacaoTrabalho().id))
             .filter(r -> TipoReservaEnum.INTEGRAL.equals(r.getTipo()) || r.getTipo().equals(reserva.getTipo()))
-            .filter(r -> !r.getId().equals(reserva.getId()))  //Para não consuderar a proria entidade numa alteracao
+            .filter(r -> !r.getId().equals(reserva.getId()))  //Para não considerar a proria entidade numa alteracao
             .findAny()
             .ifPresent(r -> {
-                throw new WebApplicationException("Já existe um agendamento para esta estação no periodo solicitado.");
+                throw new WebApplicationException("Já existe um agendamento para esta estação no período solicitado.");
             });
     }
 
@@ -160,10 +158,10 @@ public class ReservaService {
         reservasAtivasDaData.stream()           
             .filter(r -> r.getUsuario().id.equals(reserva.getUsuario().id))
             .filter(r -> TipoReservaEnum.INTEGRAL.equals(r.getTipo()) || r.getTipo().equals(reserva.getTipo()))
-            .filter(r -> !r.getId().equals(reserva.getId()))  //Para não consuderar a proria entidade numa alteracao
+            .filter(r -> !r.getId().equals(reserva.getId()))  //Para não considerar a proria entidade numa alteracao
             .findAny()
             .ifPresent(r -> {
-                throw new WebApplicationException("Já existe um agendamento deste usuário no periodo solicitado.");
+                throw new WebApplicationException("Já existe um agendamento deste usuário no período solicitado.");
             });
     }
 }
