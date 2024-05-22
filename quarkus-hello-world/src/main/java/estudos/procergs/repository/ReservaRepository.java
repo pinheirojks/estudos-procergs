@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
+
 import estudos.procergs.entity.EstacaoTrabalho;
 import estudos.procergs.entity.Reserva;
 import estudos.procergs.entity.ReservaPesq;
@@ -78,16 +80,29 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
         }
         return restricoes;
     }
-
+    
     private List<Order> montarOrdens(ReservaPesq pesq, CriteriaBuilder builder, Root<Reserva> reserva) {
         List<Order> ordens = new ArrayList<>();
         Join<Reserva, Usuario> usuario = reserva.join("usuario");
+        Join<Reserva, EstacaoTrabalho> estacao = reserva.join("estacaoTrabalho");
 
-        if (pesq.getSentidoOrdenacao().equalsIgnoreCase("ASC")) {
-            ordens.add(builder.asc(reserva.get(pesq.getCampoOrdenacao())));
-        } else {
-            ordens.add(builder.desc(reserva.get(pesq.getCampoOrdenacao())));
+        String[] arrayOrdenacao = pesq.getCampoOrdenacao().split(".");
+
+        if (StringUtils.isNotBlank(pesq.getCampoOrdenacao()) && StringUtils.isNotBlank(pesq.getSentidoOrdenacao())) {
+            Order ordemParametro;
+            Boolean ascendente = pesq.getSentidoOrdenacao().equalsIgnoreCase("ASC");
+            if (arrayOrdenacao.length > 1 && arrayOrdenacao[0].equals("usuario")) {
+                ordemParametro = ascendente ? builder.asc(usuario.get(arrayOrdenacao[1])) : builder.desc(usuario.get(arrayOrdenacao[1]));
+    
+            } else if (arrayOrdenacao.length > 1 && arrayOrdenacao[0].equals("estacaoTrabalho")) {
+                ordemParametro = ascendente ? builder.asc(estacao.get(arrayOrdenacao[1])) : builder.desc(usuario.get(arrayOrdenacao[1]));
+    
+            } else {
+                ordemParametro = ascendente ? builder.asc(reserva.get(pesq.getCampoOrdenacao())) : builder.desc(usuario.get(pesq.getCampoOrdenacao()));
+            }
+            ordens.add(ordemParametro);
         }
+
         ordens.add(builder.asc(reserva.get("data")));
         ordens.add(builder.asc(usuario.get("login")));
         return ordens;
