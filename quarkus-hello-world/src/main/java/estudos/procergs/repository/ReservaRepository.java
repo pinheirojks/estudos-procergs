@@ -86,7 +86,7 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
         Join<Reserva, Usuario> usuario = reserva.join("usuario");
         Join<Reserva, EstacaoTrabalho> estacao = reserva.join("estacaoTrabalho");
 
-        String[] arrayOrdenacao = pesq.getCampoOrdenacao().split(".");
+        String[] arrayOrdenacao = pesq.getCampoOrdenacao().split("\\.");
 
         if (StringUtils.isNotBlank(pesq.getCampoOrdenacao()) && StringUtils.isNotBlank(pesq.getSentidoOrdenacao())) {
             Order ordemParametro;
@@ -95,10 +95,10 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
                 ordemParametro = ascendente ? builder.asc(usuario.get(arrayOrdenacao[1])) : builder.desc(usuario.get(arrayOrdenacao[1]));
     
             } else if (arrayOrdenacao.length > 1 && arrayOrdenacao[0].equals("estacaoTrabalho")) {
-                ordemParametro = ascendente ? builder.asc(estacao.get(arrayOrdenacao[1])) : builder.desc(usuario.get(arrayOrdenacao[1]));
+                ordemParametro = ascendente ? builder.asc(estacao.get(arrayOrdenacao[1])) : builder.desc(estacao.get(arrayOrdenacao[1]));
     
             } else {
-                ordemParametro = ascendente ? builder.asc(reserva.get(pesq.getCampoOrdenacao())) : builder.desc(usuario.get(pesq.getCampoOrdenacao()));
+                ordemParametro = ascendente ? builder.asc(reserva.get(pesq.getCampoOrdenacao())) : builder.desc(reserva.get(pesq.getCampoOrdenacao()));
             }
             ordens.add(ordemParametro);
         }
