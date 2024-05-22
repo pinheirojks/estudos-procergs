@@ -9,6 +9,7 @@ import org.modelmapper.ModelMapper;
 import estudos.procergs.dto.UsuarioDTO;
 import estudos.procergs.dto.UsuarioPesqDTO;
 import estudos.procergs.entity.Usuario;
+import estudos.procergs.infra.AutorizacaoRest;
 import estudos.procergs.service.UsuarioService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
@@ -21,9 +22,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
-
-//http://localhost:8080/apidocs
-
+@AutorizacaoRest
 @Path("/usuario")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
