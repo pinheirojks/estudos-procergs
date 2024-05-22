@@ -7,9 +7,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import estudos.procergs.entity.Usuario;
+import estudos.procergs.infra.excecao.NaoAutorizadoException;
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 
@@ -37,9 +39,35 @@ public class UsuarioService {
 
         return query.list();
     }
-    
+
     public Usuario consultar(Long id) {
         return Usuario.findById(id);
+    }
+
+    public Usuario consultar(String login, String senha) {
+        try {
+            List<String> clausulas = new ArrayList<>();
+
+            Map<String, Object> parametros = new HashMap<String, Object>();
+
+            clausulas.add("login = :login");
+            parametros.put("login", login);
+
+            clausulas.add("senha = :senha");
+            parametros.put("senha", senha);
+
+            clausulas.add("ativo = :ativo");
+            parametros.put("ativo", true);
+
+            String restricoes = clausulas.stream()
+                    .collect(Collectors.joining(" and "));
+
+            PanacheQuery<Usuario> query = Usuario.find(restricoes, parametros);
+            return query.singleResult();
+
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Transactional
@@ -87,6 +115,12 @@ public class UsuarioService {
     private void exigirAtivo(Usuario usuario) {
         if (usuario.getAtivo() == null) {
             throw new WebApplicationException("Informe se está ativo.");
+        }
+    }
+
+    public void verificarLogin(String login, String senha) {
+        if (this.consultar(login, senha) == null) {
+            throw new NaoAutorizadoException("Usuário e senha não encontrados.");
         }
     }
 }

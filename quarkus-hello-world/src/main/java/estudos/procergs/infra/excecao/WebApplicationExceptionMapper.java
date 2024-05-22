@@ -1,4 +1,4 @@
-package estudos.procergs.infra;
+package estudos.procergs.infra.excecao;
 
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
