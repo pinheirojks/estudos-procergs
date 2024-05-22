@@ -13,7 +13,7 @@ import org.modelmapper.ModelMapper;
 import estudos.procergs.dto.UsuarioDTO;
 import estudos.procergs.dto.UsuarioPesqDTO;
 import estudos.procergs.entity.Usuario;
-import estudos.procergs.infra.AutorizacaoRest;
+import estudos.procergs.infra.interceptor.AutorizacaoRest;
 import estudos.procergs.service.UsuarioService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;

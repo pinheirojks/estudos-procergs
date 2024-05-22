@@ -1,4 +1,4 @@
-package estudos.procergs.infra;
+package estudos.procergs.infra.serializer;
 
 import java.io.IOException;
 import java.time.LocalDate;

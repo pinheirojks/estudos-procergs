@@ -1,4 +1,4 @@
-package estudos.procergs.infra;
+package estudos.procergs.infra.interceptor;
 
 import java.io.IOException;
 
@@ -20,18 +20,13 @@ public class AutorizacaoRestInterceptor implements ContainerRequestFilter {
 
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
-    requestContext.getHeaders();
-    requestContext.getRequest();
-    requestContext.getSecurityContext();
-    String apiKey = requestContext.getHeaderString("Authorization");
+    String chave = requestContext.getHeaderString("Authorization");
 
-    if (StringUtils.isBlank(apiKey)) {
+    if (StringUtils.isBlank(chave)) {
       throw new NaoAutorizadoException("Usuário e senha não informados.");
     }
-    apiKey = apiKey.substring(7);
-    String[] loginSenha = apiKey.split(":");
-    String login = loginSenha[0];
-    String senha = loginSenha[1];
-    usuarioService.verificarLogin(login, senha);
+    chave = chave.substring(7); //Remove a string "Bearier " da chave
+    String[] loginSenha = chave.split(":");
+    usuarioService.verificarLogin(loginSenha[0], loginSenha[1]);
   }
 }

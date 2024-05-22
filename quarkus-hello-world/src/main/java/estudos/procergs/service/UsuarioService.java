@@ -1,79 +1,38 @@
 package estudos.procergs.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.infra.excecao.NaoAutorizadoException;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
-import io.quarkus.panache.common.Sort;
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.persistence.NoResultException;
+import estudos.procergs.repository.UsuarioRepository;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 
-@RequestScoped
+@ApplicationScoped
 public class UsuarioService {
 
+    @Inject
+    private UsuarioRepository usuarioRepository;
+
     public List<Usuario> listar(Usuario pesq) {
-
-        List<String> clausulas = new ArrayList<>();
-        Map<String, Object> parametros = new HashMap<String, Object>();
-
-        if (pesq.getLogin() != null) {
-            clausulas.add("login like :login");
-            parametros.put("login", "%" + pesq.getLogin() + "%");
-        }
-        if (pesq.getAtivo() != null) {
-            clausulas.add("ativo = :ativo");
-            parametros.put("ativo", pesq.getAtivo());
-        }
-        String restricoes = clausulas.stream()
-                .collect(Collectors.joining(" and "));
-
-        Sort ordenacao = Sort.ascending("login");
-        PanacheQuery<Usuario> query = Usuario.find(restricoes, ordenacao, parametros);
-
-        return query.list();
+        return usuarioRepository.listar(pesq);
     }
 
     public Usuario consultar(Long id) {
-        return Usuario.findById(id);
+        return usuarioRepository.findById(id);
     }
 
     public Usuario consultar(String login, String senha) {
-        try {
-            List<String> clausulas = new ArrayList<>();
-
-            Map<String, Object> parametros = new HashMap<String, Object>();
-
-            clausulas.add("login = :login");
-            parametros.put("login", login);
-
-            clausulas.add("senha = :senha");
-            parametros.put("senha", senha);
-
-            clausulas.add("ativo = :ativo");
-            parametros.put("ativo", true);
-
-            String restricoes = clausulas.stream()
-                    .collect(Collectors.joining(" and "));
-
-            PanacheQuery<Usuario> query = Usuario.find(restricoes, parametros);
-            return query.singleResult();
-
-        } catch (NoResultException e) {
-            return null;
-        }
+        return usuarioRepository.consultar(login, senha);
     }
 
     @Transactional
     public Usuario incluir(Usuario usuario) {
         this.exigirLogin(usuario);
         this.exigirSenha(usuario);
+        this.proibirDuplicacao(usuario);
 
         usuario.setAtivo(true);
         usuario.persist();
@@ -85,8 +44,9 @@ public class UsuarioService {
         this.exigirLogin(u);
         this.exigirSenha(u);
         this.exigirAtivo(u);
+        this.proibirDuplicacao(u);
 
-        Usuario usuario = Usuario.findById(id);
+        Usuario usuario = usuarioRepository.findById(id);
 
         usuario.setLogin(u.getLogin());
         usuario.setSenha(u.getSenha());
@@ -96,7 +56,7 @@ public class UsuarioService {
 
     @Transactional
     public void excluir(Long id) {
-        Usuario usuario = Usuario.findById(id);
+        Usuario usuario = usuarioRepository.findById(id);
         usuario.delete();
     }
 
@@ -116,6 +76,18 @@ public class UsuarioService {
         if (usuario.getAtivo() == null) {
             throw new WebApplicationException("Informe se está ativo.");
         }
+    }
+
+    private void proibirDuplicacao(Usuario usuario) {
+        Usuario pesq = new Usuario();
+        pesq.setAtivo(true);
+        pesq.setLogin(usuario.getLogin());
+        this.listar(pesq).stream()
+            .filter(u -> !u.getId().equals(usuario.getId()))  //Para não considerar a proria entidade numa alteracao
+            .findAny()
+            .ifPresent(u -> {
+                throw new WebApplicationException("Login já cadastrado.");
+            });
     }
 
     public void verificarLogin(String login, String senha) {

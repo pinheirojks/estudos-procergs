@@ -1,9 +1,9 @@
 package estudos.procergs.entity;
 
-import org.hibernate.boot.model.source.spi.Sortable;
-
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,22 +16,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "usuario")
-public class Usuario extends PanacheEntity implements Sortable {
+public class Usuario extends PanacheEntityBase {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     private String login;
 
     private String senha;
 
     private Boolean ativo;
-
-    @Override
-    public String getComparatorName() {
-        return login;
-    }
-
-    @Override
-    public boolean isSorted() {
-        return true;
-    }
-
 }

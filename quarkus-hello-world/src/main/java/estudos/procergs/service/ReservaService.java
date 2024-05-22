@@ -79,7 +79,7 @@ public class ReservaService {
     }
 
     private void complementar(Reserva reserva) {
-        reserva.setUsuario(Usuario.findById(reserva.getUsuario().id));
+        reserva.setUsuario(Usuario.findById(reserva.getUsuario().getId()));
         reserva.setEstacaoTrabalho(EstacaoTrabalho.findById(reserva.getEstacaoTrabalho().id));
     }
 
@@ -162,7 +162,7 @@ public class ReservaService {
 
     private void proibirReagendamentoUsuario(Reserva reserva, List<Reserva> reservasAtivasDaData) {
         reservasAtivasDaData.stream()           
-            .filter(r -> r.getUsuario().id.equals(reserva.getUsuario().id))
+            .filter(r -> r.getUsuario().getId().equals(reserva.getUsuario().getId()))
             .filter(r -> TipoReservaEnum.INTEGRAL.equals(r.getTipo()) || r.getTipo().equals(reserva.getTipo()))
             .filter(r -> !r.getId().equals(reserva.getId()))  //Para não considerar a proria entidade numa alteracao
             .findAny()

@@ -13,7 +13,7 @@ import estudos.procergs.dto.ReservaPesqDTO;
 import estudos.procergs.entity.Reserva;
 import estudos.procergs.entity.ReservaPagina;
 import estudos.procergs.entity.ReservaPesq;
-import estudos.procergs.infra.AutorizacaoRest;
+import estudos.procergs.infra.interceptor.AutorizacaoRest;
 import estudos.procergs.mapper.ReservaMapper;
 import estudos.procergs.service.ReservaService;
 import jakarta.inject.Inject;

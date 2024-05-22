@@ -1,5 +1,7 @@
 package estudos.procergs.dto;
 
+import java.time.LocalDate;
+
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
@@ -16,10 +18,10 @@ public class ReservaPesqDTO {
     private Long idEstacaoTrabalho;
 
     @QueryParam(value = "dataInicio")
-    private String dataInicio;
+    private LocalDate dataInicio;
 
     @QueryParam(value = "dataFim")
-    private String dataFim;
+    private LocalDate dataFim;
 
     @QueryParam(value = "nomeTipo")
     private String nomeTipo;

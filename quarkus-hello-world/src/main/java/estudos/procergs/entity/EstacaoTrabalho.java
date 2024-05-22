@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import estudos.procergs.enums.TipoEstacaoTrabalhoEnum;
-import estudos.procergs.infra.TipoEstacaoTrabalhoDeserializer;
-import estudos.procergs.infra.TipoEstacaoTrabalhoSerializer;
+import estudos.procergs.infra.serializer.TipoEstacaoTrabalhoDeserializer;
+import estudos.procergs.infra.serializer.TipoEstacaoTrabalhoSerializer;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

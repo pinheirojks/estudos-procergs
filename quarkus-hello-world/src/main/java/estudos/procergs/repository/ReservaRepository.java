@@ -70,10 +70,10 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
             restricoes.add(builder.equal(reserva.get("tipo"), pesq.getNomeTipo()));
         }
         if (Objects.nonNull(pesq.getDataInicio())) {
-            restricoes.add(builder.greaterThanOrEqualTo(reserva.get("dataInicio"), pesq.getDataInicio()));
+            restricoes.add(builder.greaterThanOrEqualTo(reserva.get("data"), pesq.getDataInicio()));
         }
         if (Objects.nonNull(pesq.getDataFim())) {
-            restricoes.add(builder.lessThanOrEqualTo(reserva.get("dataFim"), pesq.getDataFim()));
+            restricoes.add(builder.lessThanOrEqualTo(reserva.get("data"), pesq.getDataFim()));
         }
         if (Objects.nonNull(pesq.getCancelada())) {
             restricoes.add(builder.equal(reserva.get("cancelada"), pesq.getCancelada()));

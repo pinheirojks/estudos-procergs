@@ -1,4 +1,4 @@
-package estudos.procergs.infra;
+package estudos.procergs.infra.interceptor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

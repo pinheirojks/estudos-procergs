@@ -6,6 +6,5 @@ public class NaoAutorizadoException extends WebApplicationException {
 
     public NaoAutorizadoException(String string) {
         super(string);
-    }
-     
+    }     
 }
