@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import estudos.procergs.enums.TipoEstacaoTrabalhoEnum;
 import estudos.procergs.infra.serializer.TipoEstacaoTrabalhoDeserializer;
 import estudos.procergs.infra.serializer.TipoEstacaoTrabalhoSerializer;
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +25,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "estacao_trabalho")
-public class EstacaoTrabalho extends PanacheEntity {
+public class EstacaoTrabalho extends PanacheEntityBase {
+
+    @Id
+    @GeneratedValue
+    private Long id;
 
     private String codigo;
 
