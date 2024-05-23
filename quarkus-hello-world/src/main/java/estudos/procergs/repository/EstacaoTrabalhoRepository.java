@@ -3,6 +3,8 @@ package estudos.procergs.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
+
 import estudos.procergs.entity.EstacaoTrabalho;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -26,6 +28,7 @@ public class EstacaoTrabalhoRepository implements PanacheRepository<EstacaoTraba
 
         criteria.select(estacaoTrabalho);
         criteria.where(builder.and(this.montarRestricoes(pesq, builder, estacaoTrabalho)));
+        criteria.orderBy(builder.asc(estacaoTrabalho.get("codigo")));
             
         return entityManager.createQuery(criteria).getResultList();
     }
