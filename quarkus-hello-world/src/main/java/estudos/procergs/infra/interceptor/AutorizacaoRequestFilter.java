@@ -12,8 +12,8 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
 
 @Provider
-@AutorizacaoRest
-public class AutorizacaoRestInterceptor implements ContainerRequestFilter {
+@AutorizacaoInterceptor
+public class AutorizacaoRequestFilter implements ContainerRequestFilter {
 
   @Inject
   private UsuarioService usuarioService;

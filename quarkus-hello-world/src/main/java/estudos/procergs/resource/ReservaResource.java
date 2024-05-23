@@ -13,7 +13,7 @@ import estudos.procergs.dto.ReservaPesqDTO;
 import estudos.procergs.entity.Reserva;
 import estudos.procergs.entity.ReservaPagina;
 import estudos.procergs.entity.ReservaPesq;
-import estudos.procergs.infra.interceptor.AutorizacaoRest;
+import estudos.procergs.infra.interceptor.AutorizacaoInterceptor;
 import estudos.procergs.mapper.ReservaMapper;
 import estudos.procergs.service.ReservaService;
 import jakarta.inject.Inject;
@@ -31,7 +31,7 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Reservas", description = "CRUD de reservas de estações de trabalho")
-@AutorizacaoRest
+@AutorizacaoInterceptor
 @SecuritySchemes(value = { @SecurityScheme(securitySchemeName = "apiKey",  type = SecuritySchemeType.HTTP, scheme = "Bearer") })
 @SecurityRequirement(name = "apiKey")
 public class ReservaResource {

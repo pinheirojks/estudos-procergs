@@ -14,7 +14,7 @@ import estudos.procergs.dto.EstacaoTrabalhoDTO;
 import estudos.procergs.dto.EstacaoTrabalhoPesqDTO;
 import estudos.procergs.entity.EstacaoTrabalho;
 import estudos.procergs.enums.TipoEstacaoTrabalhoEnum;
-import estudos.procergs.infra.interceptor.AutorizacaoRest;
+import estudos.procergs.infra.interceptor.AutorizacaoInterceptor;
 import estudos.procergs.service.EstacaoTrabalhoService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
@@ -32,7 +32,7 @@ import jakarta.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Estação Trabalho", description = "CRUD de estação de trabalho")
-@AutorizacaoRest
+@AutorizacaoInterceptor
 @SecuritySchemes(value = {
         @SecurityScheme(securitySchemeName = "apiKey", type = SecuritySchemeType.HTTP, scheme = "Bearer") })
 @SecurityRequirement(name = "apiKey")
