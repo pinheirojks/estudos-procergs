@@ -13,14 +13,14 @@ import jakarta.ws.rs.WebApplicationException;
 public class EstacaoTrabalhoService {
 
     @Inject
-    private EstacaoTrabalhoRepository estacaoTrabalhoRepository;
+    private EstacaoTrabalhoRepository repository;
 
     public List<EstacaoTrabalho> listar(EstacaoTrabalho pesq) {
-        return estacaoTrabalhoRepository.listar(pesq);
+        return repository.listar(pesq);
     }
 
     public EstacaoTrabalho consultar(Long id) {
-        return estacaoTrabalhoRepository.findById(id);
+        return repository.findById(id);
     }
 
     @Transactional
@@ -30,7 +30,7 @@ public class EstacaoTrabalhoService {
         this.proibirDuplicacao(estacao);
 
         estacao.setAtivo(true);
-        estacaoTrabalhoRepository.persist(estacao);
+        repository.persist(estacao);
         return estacao;
     }
 
@@ -41,7 +41,7 @@ public class EstacaoTrabalhoService {
         this.exigirAtivo(e);
         this.proibirDuplicacao(e);
 
-        EstacaoTrabalho estacao = estacaoTrabalhoRepository.findById(id);
+        EstacaoTrabalho estacao = repository.findById(id);
 
         estacao.setCodigo(e.getCodigo());
         estacao.setTipo(e.getTipo());
@@ -51,7 +51,7 @@ public class EstacaoTrabalhoService {
 
     @Transactional
     public void excluir(Long id) {
-        EstacaoTrabalho estacao = estacaoTrabalhoRepository.findById(id);
+        EstacaoTrabalho estacao = repository.findById(id);
         estacao.delete();
     }
 

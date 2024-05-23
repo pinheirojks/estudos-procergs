@@ -66,6 +66,25 @@ public class UsuarioService {
         usuario.delete();
     }
 
+    public void verificarLogin(String chave) {
+        if (StringUtils.isBlank(chave)) {
+            throw new NaoAutorizadoException("Usuário, senha e IP não informados.");
+        }
+        chave = chave.substring(7); // Remove a string "Bearier " da chave
+        String[] loginSenhaIp = chave.split(":");
+        String login = loginSenhaIp[0];
+        String senha = loginSenhaIp[1];
+        Usuario usuario = this.consultar(login, senha);
+        if (usuario == null) {
+            throw new NaoAutorizadoException("Usuário e senha não encontrados.");
+        }  
+        if (loginSenhaIp.length < 3) {
+            throw new NaoAutorizadoException("IP não informado.");
+        }
+        String ip = loginSenhaIp[2];
+        autorizacaoRepository.incluirAutorizacao(usuario, ip);
+    }
+
     private void exigirLogin(Usuario usuario) {
         if (usuario.getLogin() == null) {
             throw new WebApplicationException("Informe o login.");
@@ -94,25 +113,5 @@ public class UsuarioService {
             .ifPresent(u -> {
                 throw new WebApplicationException("Login já cadastrado.");
             });
-    }
-
-    public void verificarLogin(String chave) {
-
-        if (StringUtils.isBlank(chave)) {
-            throw new NaoAutorizadoException("Usuário, senha e IP não informados.");
-        }
-        chave = chave.substring(7); // Remove a string "Bearier " da chave
-        String[] loginSenhaIp = chave.split(":");
-        String login = loginSenhaIp[0];
-        String senha = loginSenhaIp[1];
-        Usuario usuario = this.consultar(login, senha);
-        if (usuario == null) {
-            throw new NaoAutorizadoException("Usuário e senha não encontrados.");
-        }  
-        if (loginSenhaIp.length < 3) {
-            throw new NaoAutorizadoException("IP não informado.");
-        }
-        String ip = loginSenhaIp[2];
-        autorizacaoRepository.incluirAutorizacao(usuario, ip);
     }
 }

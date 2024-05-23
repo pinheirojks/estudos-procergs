@@ -16,18 +16,18 @@ public class EntityListener {
     private AutorizacaoRepository autorizacaoRepository;
 
     @PrePersist
-    public void prePersist(AbstractEntity entity) {
+    public void prePersist(AbstractEntity entidade) {
         AutorizacaoDTO autorizacao = autorizacaoRepository.getAutorizacao();
-        entity.setDataHoraInclusao(LocalDateTime.now());
-        entity.setIdUsuarioInclusao(autorizacao.getIdUsuario());
-        entity.setIpInclusao(autorizacao.getIp());
+        entidade.setDataHoraInclusao(LocalDateTime.now());
+        entidade.setIdUsuarioInclusao(autorizacao.getIdUsuario());
+        entidade.setIpInclusao(autorizacao.getIp());
     }
 
     @PreUpdate
-    public void preUpdate(AbstractEntity entity) {
+    public void preUpdate(AbstractEntity entidade) {
         AutorizacaoDTO autorizacao = autorizacaoRepository.getAutorizacao();
-        entity.setDataHoraAlteracao(LocalDateTime.now());
-        entity.setIdUsuarioAlteracao(autorizacao.getIdUsuario());
-        entity.setIpAlteracao(autorizacao.getIp());
+        entidade.setDataHoraAlteracao(LocalDateTime.now());
+        entidade.setIdUsuarioAlteracao(autorizacao.getIdUsuario());
+        entidade.setIpAlteracao(autorizacao.getIp());
     }
 }
