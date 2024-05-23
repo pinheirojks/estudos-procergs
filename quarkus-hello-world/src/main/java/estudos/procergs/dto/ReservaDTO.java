@@ -2,15 +2,14 @@ package estudos.procergs.dto;
 
 import java.time.LocalDate;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import estudos.procergs.infra.serializer.LocalDateDeserializer;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class ReservaDTO {
 
     private Long id;
@@ -19,6 +18,7 @@ public class ReservaDTO {
 
     private EstacaoTrabalhoDTO estacaoTrabalho;
 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate data;
 
     private TipoReservaDTO tipo;

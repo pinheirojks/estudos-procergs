@@ -30,7 +30,7 @@ public class EstacaoTrabalhoService {
         this.proibirDuplicacao(estacao);
 
         estacao.setAtivo(true);
-        estacao.persist();
+        estacaoTrabalhoRepository.persist(estacao);
         return estacao;
     }
 
@@ -78,7 +78,6 @@ public class EstacaoTrabalhoService {
         pesq.setAtivo(true);
         pesq.setCodigo(estacao.getCodigo());
         this.listar(pesq).stream()
-                .filter(e -> e.getCodigo().equals(estacao.getCodigo())) //filtro provisório - problema no repository
                 .filter(u -> !u.getId().equals(estacao.getId())) // Para não considerar a propria entidade numa alteracao
                 .findAny()
                 .ifPresent(u -> {

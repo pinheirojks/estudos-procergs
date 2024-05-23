@@ -20,6 +20,7 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 @ApplicationScoped
@@ -34,8 +35,7 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
         Root<Reserva> reserva = criteria.from(Reserva.class);
 
         criteria.select(reserva);
-        this.montarRestricoes(pesq, builder, reserva).stream()
-            .forEach(restricao -> criteria.where(restricao));
+        criteria.where(builder.and(this.montarRestricoes(pesq, builder, reserva)));
         criteria.orderBy(this.montarOrdens(pesq, builder, reserva));
 
         TypedQuery<Reserva> query = entityManager.createQuery(criteria);
@@ -49,13 +49,12 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
 
         Root<Reserva> reserva = criteria.from(Reserva.class);
         criteria.select(builder.count(reserva));
-
-        this.montarRestricoes(pesq, builder, reserva).stream()
-            .forEach(restricao -> criteria.where(restricao));        
+        criteria.where(builder.and(this.montarRestricoes(pesq, builder, reserva)));
+        
         return entityManager.createQuery(criteria).getSingleResult();
     }
 
-    private List<Expression<Boolean>> montarRestricoes(ReservaPesq pesq, CriteriaBuilder builder, Root<Reserva> reserva) {
+    private Predicate[] montarRestricoes(ReservaPesq pesq, CriteriaBuilder builder, Root<Reserva> reserva) {
         List<Expression<Boolean>> restricoes = new ArrayList<>();
         Join<Reserva, Usuario> usuario = reserva.join("usuario");
         Join<Reserva, EstacaoTrabalho> estacao = reserva.join("estacaoTrabalho");
@@ -78,7 +77,8 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
         if (Objects.nonNull(pesq.getCancelada())) {
             restricoes.add(builder.equal(reserva.get("cancelada"), pesq.getCancelada()));
         }
-        return restricoes;
+        return restricoes.stream()
+            .toArray(tamanho -> new Predicate[tamanho]);
     }
     
     private List<Order> montarOrdens(ReservaPesq pesq, CriteriaBuilder builder, Root<Reserva> reserva) {
