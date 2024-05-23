@@ -9,6 +9,6 @@ import jakarta.ws.rs.NameBinding;
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(value = RetentionPolicy.RUNTIME)
 @NameBinding
-public @interface AutorizacaoRest {
+public @interface AutorizacaoInterceptor {
     
 }
