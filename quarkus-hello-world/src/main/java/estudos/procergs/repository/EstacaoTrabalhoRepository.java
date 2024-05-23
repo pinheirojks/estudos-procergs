@@ -3,8 +3,6 @@ package estudos.procergs.repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mysql.cj.x.protobuf.MysqlxCrud.Order;
-
 import estudos.procergs.entity.EstacaoTrabalho;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;

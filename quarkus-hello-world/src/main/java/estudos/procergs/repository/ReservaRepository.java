@@ -90,15 +90,20 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
 
         if (StringUtils.isNotBlank(pesq.getCampoOrdenacao()) && StringUtils.isNotBlank(pesq.getSentidoOrdenacao())) {
             Order ordemParametro;
-            Boolean ascendente = pesq.getSentidoOrdenacao().equalsIgnoreCase("ASC");
+            Expression<?> campo;
+
             if (arrayOrdenacao.length > 1 && arrayOrdenacao[0].equals("usuario")) {
-                ordemParametro = ascendente ? builder.asc(usuario.get(arrayOrdenacao[1])) : builder.desc(usuario.get(arrayOrdenacao[1]));
-    
+                campo = usuario.get(arrayOrdenacao[1]);    
             } else if (arrayOrdenacao.length > 1 && arrayOrdenacao[0].equals("estacaoTrabalho")) {
-                ordemParametro = ascendente ? builder.asc(estacao.get(arrayOrdenacao[1])) : builder.desc(estacao.get(arrayOrdenacao[1]));
-    
+                campo = estacao.get(arrayOrdenacao[1]);    
             } else {
-                ordemParametro = ascendente ? builder.asc(reserva.get(pesq.getCampoOrdenacao())) : builder.desc(reserva.get(pesq.getCampoOrdenacao()));
+                campo = reserva.get(pesq.getCampoOrdenacao());
+            }
+
+            if (pesq.getSentidoOrdenacao().equalsIgnoreCase("ASC")) {
+                ordemParametro = builder.asc(campo);    
+            } else {
+                ordemParametro = builder.desc(campo);
             }
             ordens.add(ordemParametro);
         }
