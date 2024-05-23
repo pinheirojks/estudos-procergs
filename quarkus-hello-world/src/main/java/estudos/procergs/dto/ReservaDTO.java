@@ -1,6 +1,7 @@
 package estudos.procergs.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -24,4 +25,16 @@ public class ReservaDTO {
     private TipoReservaDTO tipo;
 
     private Boolean cancelada;
+
+    private LocalDateTime dataHoraInclusao;
+
+    private LocalDateTime dataHoraAlteracao;
+
+    private Long idUsuarioInclusao;
+
+    private Long idUsuarioAlteracao;
+
+    private String ipInclusao;
+
+    private String ipAlteracao;
 }

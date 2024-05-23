@@ -3,7 +3,7 @@ package estudos.procergs.entity;
 import java.time.LocalDate;
 
 import estudos.procergs.enums.TipoReservaEnum;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import estudos.procergs.infra.framework.AbstractEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,7 +20,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "reserva")
-public class Reserva extends PanacheEntityBase {
+public class Reserva extends AbstractEntity {
 
     @Id
     @GeneratedValue

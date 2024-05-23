@@ -2,8 +2,11 @@ package estudos.procergs.service;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.infra.excecao.NaoAutorizadoException;
+import estudos.procergs.infra.interceptor.AutorizacaoRepository;
 import estudos.procergs.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,6 +18,9 @@ public class UsuarioService {
 
     @Inject
     private UsuarioRepository usuarioRepository;
+
+    @Inject
+    private AutorizacaoRepository autorizacaoRepository;
 
     public List<Usuario> listar(Usuario pesq) {
         return usuarioRepository.listar(pesq);
@@ -90,9 +96,23 @@ public class UsuarioService {
             });
     }
 
-    public void verificarLogin(String login, String senha) {
-        if (this.consultar(login, senha) == null) {
-            throw new NaoAutorizadoException("Usuário e senha não encontrados.");
+    public void verificarLogin(String chave) {
+
+        if (StringUtils.isBlank(chave)) {
+            throw new NaoAutorizadoException("Usuário, senha e IP não informados.");
         }
+        chave = chave.substring(7); // Remove a string "Bearier " da chave
+        String[] loginSenhaIp = chave.split(":");
+        String login = loginSenhaIp[0];
+        String senha = loginSenhaIp[1];
+        Usuario usuario = this.consultar(login, senha);
+        if (usuario == null) {
+            throw new NaoAutorizadoException("Usuário e senha não encontrados.");
+        }  
+        if (loginSenhaIp.length < 3) {
+            throw new NaoAutorizadoException("IP não informado.");
+        }
+        String ip = loginSenhaIp[2];
+        autorizacaoRepository.incluirAutorizacao(usuario, ip);
     }
 }
