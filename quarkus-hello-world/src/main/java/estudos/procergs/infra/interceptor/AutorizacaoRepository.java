@@ -14,7 +14,7 @@ public class AutorizacaoRepository {
 
     public void incluirAutorizacao(Usuario usuario, String ip) {
         this.autorizacao = new AutorizacaoDTO();
-        this.autorizacao.setIdUsuario(usuario.getId());
+        this.autorizacao.setUsuario(usuario);
         this.autorizacao.setIp(ip);
     }
 }

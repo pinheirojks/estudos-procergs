@@ -5,7 +5,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import estudos.procergs.entity.Usuario;
+import estudos.procergs.enums.PerfilUsuarioEnum;
 import estudos.procergs.infra.excecao.NaoAutorizadoException;
+import estudos.procergs.infra.excecao.NaoPermitidoException;
 import estudos.procergs.infra.interceptor.AutorizacaoRepository;
 import estudos.procergs.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -36,6 +38,7 @@ public class UsuarioService {
 
     @Transactional
     public Usuario incluir(Usuario usuario) {
+        this.verificarPermicoes();
         this.exigirLogin(usuario);
         this.exigirSenha(usuario);
         this.proibirDuplicacao(usuario);
@@ -47,6 +50,7 @@ public class UsuarioService {
 
     @Transactional
     public Usuario alterar(Long id, Usuario u) {
+        this.verificarPermicoes();
         this.exigirLogin(u);
         this.exigirSenha(u);
         this.exigirAtivo(u);
@@ -62,6 +66,7 @@ public class UsuarioService {
 
     @Transactional
     public void excluir(Long id) {
+        this.verificarPermicoes();
         Usuario usuario = usuarioRepository.findById(id);
         usuario.delete();
     }
@@ -113,5 +118,12 @@ public class UsuarioService {
             .ifPresent(u -> {
                 throw new WebApplicationException("Login já cadastrado.");
             });
+    }
+
+    private void verificarPermicoes() {
+        Usuario usuarioLogado = autorizacaoRepository.getAutorizacao().getUsuario();
+        if(!PerfilUsuarioEnum.ADMINISTRADOR.equals(usuarioLogado.getPerfil())) {
+            throw new NaoPermitidoException("Usuário sem permissão para esta operação.");
+        }
     }
 }

@@ -1,5 +1,6 @@
 package estudos.procergs.infra.interceptor;
 
+import estudos.procergs.entity.Usuario;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class AutorizacaoDTO {
     
-    private Long idUsuario;
+    private Usuario usuario;
 
     private String ip;
 }

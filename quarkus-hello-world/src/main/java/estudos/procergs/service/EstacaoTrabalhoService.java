@@ -3,6 +3,10 @@ package estudos.procergs.service;
 import java.util.List;
 
 import estudos.procergs.entity.EstacaoTrabalho;
+import estudos.procergs.entity.Usuario;
+import estudos.procergs.enums.PerfilUsuarioEnum;
+import estudos.procergs.infra.excecao.NaoPermitidoException;
+import estudos.procergs.infra.interceptor.AutorizacaoRepository;
 import estudos.procergs.repository.EstacaoTrabalhoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -15,6 +19,9 @@ public class EstacaoTrabalhoService {
     @Inject
     private EstacaoTrabalhoRepository repository;
 
+    @Inject
+    private AutorizacaoRepository autorizacaoRepository;
+
     public List<EstacaoTrabalho> listar(EstacaoTrabalho pesq) {
         return repository.listar(pesq);
     }
@@ -25,6 +32,7 @@ public class EstacaoTrabalhoService {
 
     @Transactional
     public EstacaoTrabalho incluir(EstacaoTrabalho estacao) {
+        this.verificarPermicoes();
         this.exigirCodigo(estacao);
         this.exigirTipo(estacao);
         this.proibirDuplicacao(estacao);
@@ -36,6 +44,7 @@ public class EstacaoTrabalhoService {
 
     @Transactional
     public EstacaoTrabalho alterar(Long id, EstacaoTrabalho e) {
+        this.verificarPermicoes();
         this.exigirCodigo(e);
         this.exigirTipo(e);
         this.exigirAtivo(e);
@@ -51,6 +60,7 @@ public class EstacaoTrabalhoService {
 
     @Transactional
     public void excluir(Long id) {
+        this.verificarPermicoes();
         EstacaoTrabalho estacao = repository.findById(id);
         estacao.delete();
     }
@@ -83,6 +93,13 @@ public class EstacaoTrabalhoService {
                 .ifPresent(u -> {
                     throw new WebApplicationException("Estação de trabalho já cadastrada.");
                 });
+    }
+
+    private void verificarPermicoes() {
+        Usuario usuarioLogado = autorizacaoRepository.getAutorizacao().getUsuario();
+        if(!PerfilUsuarioEnum.ADMINISTRADOR.equals(usuarioLogado.getPerfil())) {
+            throw new NaoPermitidoException("Usuário sem permissão para esta operação.");
+        }
     }
 
 }

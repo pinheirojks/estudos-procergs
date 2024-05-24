@@ -19,7 +19,7 @@ public class EntityListener {
     public void prePersist(AbstractEntity entidade) {
         AutorizacaoDTO autorizacao = autorizacaoRepository.getAutorizacao();
         entidade.setDataHoraInclusao(LocalDateTime.now());
-        entidade.setIdUsuarioInclusao(autorizacao.getIdUsuario());
+        entidade.setIdUsuarioInclusao(autorizacao.getUsuario().getId());
         entidade.setIpInclusao(autorizacao.getIp());
     }
 
@@ -27,7 +27,7 @@ public class EntityListener {
     public void preUpdate(AbstractEntity entidade) {
         AutorizacaoDTO autorizacao = autorizacaoRepository.getAutorizacao();
         entidade.setDataHoraAlteracao(LocalDateTime.now());
-        entidade.setIdUsuarioAlteracao(autorizacao.getIdUsuario());
+        entidade.setIdUsuarioAlteracao(autorizacao.getUsuario().getId());
         entidade.setIpAlteracao(autorizacao.getIp());
     }
 }
