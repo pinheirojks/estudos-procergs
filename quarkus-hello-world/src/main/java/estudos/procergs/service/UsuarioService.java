@@ -120,11 +120,12 @@ public class UsuarioService {
             });
     }
 
-    private void verificarPermicoes() {
+    public boolean verificarPermicoes() {
         Usuario usuarioLogado = autorizacaoRepository.getAutorizacao().getUsuario();
         if(!PerfilUsuarioEnum.ADMINISTRADOR.equals(usuarioLogado.getPerfil())) {
             throw new NaoPermitidoException("Usuário sem permissão para esta operação.");
         }
+        return true;
     }
 
     public Usuario consultarUsuarioSistema() {
