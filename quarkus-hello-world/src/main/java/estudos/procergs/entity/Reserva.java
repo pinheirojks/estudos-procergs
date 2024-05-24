@@ -2,10 +2,12 @@ package estudos.procergs.entity;
 
 import java.time.LocalDate;
 
+import estudos.procergs.entity.listener.ReservaListener;
 import estudos.procergs.enums.TipoReservaEnum;
 import estudos.procergs.infra.framework.AbstractEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +22,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "reserva")
+@EntityListeners(value = ReservaListener.class)
 public class Reserva extends AbstractEntity {
 
     @Id

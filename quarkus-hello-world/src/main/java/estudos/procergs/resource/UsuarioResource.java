@@ -8,12 +8,12 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.modelmapper.ModelMapper;
 
 import estudos.procergs.dto.UsuarioDTO;
 import estudos.procergs.dto.UsuarioPesqDTO;
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.infra.interceptor.AutorizacaoInterceptor;
+import estudos.procergs.mapper.UsuarioMapper;
 import estudos.procergs.service.UsuarioService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
@@ -38,14 +38,14 @@ public class UsuarioResource {
     @Inject
     private UsuarioService usuarioService;
 
-    private ModelMapper mapper = new ModelMapper();
+    private UsuarioMapper usuarioMapper = new UsuarioMapper();
 
     @GET
     @Operation(description = "Lista os usuários pesquisando por login e ativo")
     public List<UsuarioDTO> listar(@BeanParam UsuarioPesqDTO dto) {
-        Usuario pesq = mapper.map(dto, Usuario.class);        
+        Usuario pesq = usuarioMapper.paraUsuario(dto);        
         return usuarioService.listar(pesq).stream()
-            .map(u -> mapper.map(u, UsuarioDTO.class))
+            .map(u -> usuarioMapper.paraDTO(u))
             .toList();
     }
 
@@ -54,24 +54,24 @@ public class UsuarioResource {
     @Operation(description = "Consulta um usuário pelo seu ID")
     public UsuarioDTO consultar(@PathParam("id") Long id) {        
         Usuario usuario = usuarioService.consultar(id);
-        return mapper.map(usuario, UsuarioDTO.class);
+        return usuarioMapper.paraDTO(usuario);
     }
 
     @POST
     @Operation(description = "Cria um novo usuário")
     public UsuarioDTO incluir(UsuarioDTO dto) {        
-        Usuario usuario = mapper.map(dto, Usuario.class);
+        Usuario usuario = usuarioMapper.paraUsuario(dto);
         usuario = usuarioService.incluir(usuario);
-        return mapper.map(usuario, UsuarioDTO.class);
+        return usuarioMapper.paraDTO(usuario);
     }
 
     @PUT
     @Path("{id}")
     @Operation(description = "Altera um usuário")
     public UsuarioDTO alterar(@PathParam("id") Long id, UsuarioDTO dto) {        
-        Usuario usuario = mapper.map(dto, Usuario.class);
+        Usuario usuario = usuarioMapper.paraUsuario(dto);
         usuario = usuarioService.alterar(id, usuario);
-        return mapper.map(usuario, UsuarioDTO.class);
+        return usuarioMapper.paraDTO(usuario);
     }
 
     @DELETE
