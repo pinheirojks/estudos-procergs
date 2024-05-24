@@ -1,7 +1,6 @@
 package estudos.procergs.entity;
 
 import estudos.procergs.enums.PerfilUsuarioEnum;
-import estudos.procergs.enums.TipoEstacaoTrabalhoEnum;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

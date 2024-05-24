@@ -82,18 +82,23 @@ public class ReservaService {
         reserva.setUsuario(Usuario.findById(reserva.getUsuario().getId()));
         reserva.setEstacaoTrabalho(EstacaoTrabalho.findById(reserva.getEstacaoTrabalho().getId()));
     }
-
-    @Transactional
-    public void excluir(Long id) {
-        Reserva reserva = repository.findById(id);
-        repository.delete(reserva);
-    }
-
     @Transactional
     public void cancelar(Long id){
         Reserva reserva = repository.findById(id);
         reserva.setCancelada(true);
     }
+
+    @Transactional
+    public Long excluirReservasCanceladas() {
+        ReservaPesq pesq = new ReservaPesq();
+        pesq.setCancelada(true);
+        List<Reserva> reservas = repository.listar(pesq);
+        Long quantidade = Long.valueOf(reservas.size());
+        reservas.stream()
+            .forEach(reserva -> repository.delete(reserva));
+        return quantidade;
+    }
+
 
     private void exigirUsuario(Reserva reserva) {
         if (reserva.getUsuario() == null) {

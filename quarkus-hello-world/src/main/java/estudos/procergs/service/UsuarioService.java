@@ -126,4 +126,9 @@ public class UsuarioService {
             throw new NaoPermitidoException("Usuário sem permissão para esta operação.");
         }
     }
+
+    public Usuario consultarUsuarioSistema() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'consultarUsuarioSistema'");
+    }
 }

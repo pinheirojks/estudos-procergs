@@ -86,9 +86,8 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
         Join<Reserva, Usuario> usuario = reserva.join("usuario");
         Join<Reserva, EstacaoTrabalho> estacao = reserva.join("estacaoTrabalho");
 
-        String[] arrayOrdenacao = pesq.getCampoOrdenacao().split("\\.");
-
         if (StringUtils.isNotBlank(pesq.getCampoOrdenacao()) && StringUtils.isNotBlank(pesq.getSentidoOrdenacao())) {
+            String[] arrayOrdenacao = pesq.getCampoOrdenacao().split("\\.");
             Order ordemParametro;
             Expression<?> campo;
 
@@ -114,7 +113,7 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
     }
 
     private TypedQuery<Reserva> montarPaginacao(ReservaPesq pesq, TypedQuery<Reserva> query) {
-        if (pesq.getTamanhoPagina().compareTo(Integer.valueOf(0)) > 0 && pesq.getNumeroPagina().compareTo(Integer.valueOf(0)) > 0) {
+        if (Objects.nonNull(pesq.getTamanhoPagina()) && Objects.nonNull(pesq.getNumeroPagina())) {
             query.setMaxResults(pesq.getTamanhoPagina());
             query.setFirstResult((pesq.getNumeroPagina() - 1) * pesq.getTamanhoPagina());
         }

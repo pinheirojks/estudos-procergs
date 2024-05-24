@@ -29,11 +29,9 @@ public class ReservaPesqDTO {
     @QueryParam(value = "cancelada")
     private Boolean cancelada;
 
-    @DefaultValue(value = "0")
     @QueryParam(value = "numeroPagina")
     private Integer numeroPagina;
 
-    @DefaultValue(value = "0")
     @QueryParam(value = "tamanhoPagina")
     private Integer tamanhoPagina;
 
