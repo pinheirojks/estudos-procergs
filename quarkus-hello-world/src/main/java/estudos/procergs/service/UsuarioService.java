@@ -128,7 +128,6 @@ public class UsuarioService {
     }
 
     public Usuario consultarUsuarioSistema() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'consultarUsuarioSistema'");
+       return consultar(1L);
     }
 }

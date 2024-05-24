@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 
+import estudos.procergs.dto.PerfilUsuarioDTO;
 import estudos.procergs.dto.ReservaDTO;
 import estudos.procergs.dto.ReservaPaginaDTO;
 import estudos.procergs.dto.ReservaPesqDTO;
@@ -20,6 +21,7 @@ public class ReservaMapper {
     public ReservaDTO paraDTO(Reserva reserva) {
         ReservaDTO dto = mapper.map(reserva, ReservaDTO.class);
         dto.setTipo(new TipoReservaDTO(reserva.getTipo().name(), reserva.getTipo().getDescricao()));
+        dto.getUsuario().setPerfil(new PerfilUsuarioDTO(reserva.getUsuario().getPerfil().name(), reserva.getUsuario().getPerfil().getDescricao()));
         return dto;
     }
 

@@ -30,7 +30,7 @@ public class ReservaLimpezaScheduler {
     @Inject
     private UsuarioService usuarioService;    
 
-    @Scheduled(cron = "0 28 14 * * ?") 
+    @Scheduled(cron = "0 0 0 * * ?") 
     public void excluirReservasCanceladas(ScheduledExecution execution) {
         try {
             if (!"S".equalsIgnoreCase(rotinasHabilitadas)) {
