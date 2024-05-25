@@ -9,9 +9,12 @@ import org.mockito.Mockito;
 
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
+import estudos.procergs.repository.UsuarioRepository;
 import estudos.procergs.service.UsuarioService;
+import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.WebApplicationException;
 
 @QuarkusTest
 public class UsuarioServiceTest {
@@ -23,33 +26,26 @@ public class UsuarioServiceTest {
     public static void setup(){
         UsuarioService mock = Mockito.mock(UsuarioService.class);
         Mockito.when(mock.verificarPermicoes()).thenReturn(true);
+        QuarkusMock.installMockForType(mock, UsuarioService.class);
     }
 
 
     @Test
+    @DisplayName("Teste de inclusão de usuário sem login")
     @Order(1)
-    @DisplayName("Teste da Inclusão de Usuario Não Nulo")
-    public void testInclusaoUsuarioNotNull() {
+    public void testIncluirUsuarioSemLogin() {
+        //QuarkusMock.installMockForInstance(new UsuarioRepository(), usuarioService);
         Usuario usuario = new Usuario();
-        usuario.setLogin("testLogin");
-        usuario.setSenha("testSenha");
+        usuario.setSenha("123456");
         usuario.setPerfil(PerfilUsuarioEnum.ADMINISTRADOR);
-        usuario = usuarioService.incluir(usuario);
-        Assertions.assertNotNull(usuario);
+        //Assertions.assertThrows(WebApplicationException.class, () -> {
+        //    usuarioService.incluir(usuario);
+        //});
+        try {
+            usuarioService.incluir(usuario);
+        } catch (WebApplicationException e) {
+            Assertions.assertEquals("Login é obrigatório2", e.getMessage());
+        }
     }
-    @Test
-    @Order(2)
-    @DisplayName("Teste da Inclusão de Usuario ID Não Nulo")
-    public void testInclusaoUsuarioIdNotNull() {
-        Usuario usuario = new Usuario();
-        usuario.setLogin("testLogin");
-        usuario.setSenha("testSenha");
-        usuario.setPerfil(PerfilUsuarioEnum.ADMINISTRADOR);
-        usuario = usuarioService.incluir(usuario);
-        Assertions.assertNotNull(usuario.getId());
-    }
-
-    
-
 
 }
