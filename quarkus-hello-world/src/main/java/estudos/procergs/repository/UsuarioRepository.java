@@ -62,4 +62,9 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
             return null;
         }
     }
+
+    // public Usuario incluir(Usuario usuario) {
+    //     usuario.persist();
+    //     return usuario;
+    // }
 }

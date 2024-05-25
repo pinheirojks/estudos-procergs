@@ -44,7 +44,7 @@ public class UsuarioService {
         this.proibirDuplicacao(usuario);
 
         usuario.setAtivo(true);
-        usuario.persist();
+        usuarioRepository.persist(usuario);
         return usuario;
     }
 
@@ -120,12 +120,11 @@ public class UsuarioService {
             });
     }
 
-    public boolean verificarPermicoes() {
+    public void verificarPermicoes() {
         Usuario usuarioLogado = autorizacaoRepository.getAutorizacao().getUsuario();
         if(!PerfilUsuarioEnum.ADMINISTRADOR.equals(usuarioLogado.getPerfil())) {
             throw new NaoPermitidoException("Usuário sem permissão para esta operação.");
         }
-        return true;
     }
 
     public Usuario consultarUsuarioSistema() {
