@@ -37,9 +37,10 @@ public class UsuarioSoeResource {
     @Operation(description = "Lista os usuários pesquisando por orgão, matricula ou nome")
     public List<UsuarioSoe> listar(
         @QueryParam(value = "siglaOrgao") String siglaOrgao, 
-        @QueryParam(value = "criterio") String criterio) {
+        @QueryParam(value = "matricula") Long matricula, 
+        @QueryParam(value = "nome") String nome) {
 
-        return usuarioSoeService.listar(siglaOrgao, criterio);
+        return usuarioSoeService.listar(siglaOrgao, matricula, nome);
     }
 
     @GET

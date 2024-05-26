@@ -18,6 +18,7 @@ import com.procergs.soeauth.client.SOEAuthClient;
 
 import estudos.procergs.util.TextoUtil;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.WebApplicationException;
 
 @ApplicationScoped
 public class UsuarioSoeService {
@@ -35,26 +36,21 @@ public class UsuarioSoeService {
   private SOEAuthClient soeAuthClient = new SOEAuthClient(); // TODO: Esta parte não deve funcionar
 
   private final static ObjectMapper objectMapper = new ObjectMapper();
-  
-  public List<UsuarioSoe> listar(String siglaOrgao, String criterio) {
-    Long matricula = null;
-    String nome = null;
-    try {
-      matricula = Long.valueOf(criterio);
-    } catch (Exception e) {
-      nome = TextoUtil.removerAcentos(criterio);  //Necessário remover acentos, pois causam erro no servico. Além disso, a pesquisa sem acentos encontra palavras com acentos
-    }
-    return this.listar(siglaOrgao, matricula, nome);
-  }
 
   public List<UsuarioSoe> listar(String siglaOrgao, Long matricula, String nome) {
     
     StringBuilder urlConexao = new StringBuilder(urlSoe.concat("/usuarios"));
+
+    if (StringUtils.isBlank(siglaOrgao)) {
+      throw new WebApplicationException("Infome o órgão.");
+    }
+
     urlConexao.append("?siglaOrganizacao=").append(siglaOrgao);
     if (Objects.nonNull(matricula)) {
       urlConexao.append("&matricula=").append(matricula);
     }
     if (StringUtils.isNotBlank(nome)) {
+      nome = TextoUtil.removerAcentos(nome); //Necessário remover acentos, pois causam erro no servico. Além disso, a pesquisa sem acentos encontra palavras com acentos
       urlConexao.append("&nomeUsuario=").append("*").append(nome).append("*");
     }
     
