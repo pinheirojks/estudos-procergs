@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
-import estudos.procergs.repository.UsuarioRepository;
 import estudos.procergs.service.UsuarioService;
 import io.quarkus.test.junit.QuarkusMock;
 import io.quarkus.test.junit.QuarkusTest;
@@ -25,7 +24,7 @@ public class UsuarioServiceTest {
     @BeforeAll
     public static void setup(){
         UsuarioService mock = Mockito.mock(UsuarioService.class);
-        Mockito.when(mock.verificarPermicoes()).thenReturn(true);
+        //Mockito.when(mock.verificarPermicoes()).thenReturn(true);
         QuarkusMock.installMockForType(mock, UsuarioService.class);
     }
 

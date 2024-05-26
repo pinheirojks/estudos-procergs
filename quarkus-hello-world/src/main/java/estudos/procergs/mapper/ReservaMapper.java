@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 
-import estudos.procergs.dto.PerfilUsuarioDTO;
 import estudos.procergs.dto.ReservaDTO;
 import estudos.procergs.dto.ReservaPaginaDTO;
 import estudos.procergs.dto.ReservaPesqDTO;
@@ -13,20 +12,32 @@ import estudos.procergs.entity.Reserva;
 import estudos.procergs.entity.ReservaPagina;
 import estudos.procergs.entity.ReservaPesq;
 import estudos.procergs.enums.TipoReservaEnum;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class ReservaMapper {
 
     private ModelMapper mapper = new ModelMapper();
 
-    public ReservaDTO paraDTO(Reserva reserva) {
+    @Inject
+    private UsuarioMapper usuarioMapper;
+
+    @Inject
+    private EstacaoTrabalhoMapper estacaoTrabalhoMapper;
+
+    public ReservaDTO paraDTO(Reserva reserva) {        
         ReservaDTO dto = mapper.map(reserva, ReservaDTO.class);
+        dto.setUsuario(usuarioMapper.paraDTO(reserva.getUsuario()));
+        dto.setEstacaoTrabalho(estacaoTrabalhoMapper.paraDTO(reserva.getEstacaoTrabalho()));
         dto.setTipo(new TipoReservaDTO(reserva.getTipo().name(), reserva.getTipo().getDescricao()));
-        dto.getUsuario().setPerfil(new PerfilUsuarioDTO(reserva.getUsuario().getPerfil().name(), reserva.getUsuario().getPerfil().getDescricao()));
         return dto;
     }
 
     public Reserva paraReserva(ReservaDTO dto) {
         Reserva reserva = mapper.map(dto, Reserva.class);
+        reserva.setUsuario(usuarioMapper.paraUsuario(dto.getUsuario()));
+        reserva.setEstacaoTrabalho(estacaoTrabalhoMapper.paraEstacaoTrabalho(dto.getEstacaoTrabalho()));
         reserva.setTipo(TipoReservaEnum.parseByName(dto.getTipo().getNome()));
         return reserva;
     }

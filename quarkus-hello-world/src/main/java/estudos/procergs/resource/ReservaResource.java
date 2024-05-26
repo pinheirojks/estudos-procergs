@@ -39,11 +39,12 @@ public class ReservaResource {
     @Inject
     private ReservaService reservaService;
     
-    private ReservaMapper reservaMapper = new ReservaMapper();
+    @Inject
+    private ReservaMapper reservaMapper;
 
     @GET
     @Operation(description = "Lista com paginação os usuários pesquisando por diversos campos")
-    public ReservaPaginaDTO listar(@BeanParam ReservaPesqDTO pesqDTO) {
+    public ReservaPaginaDTO listar(@BeanParam ReservaPesqDTO pesqDTO) {        
         ReservaPesq pesq = reservaMapper.paraPesquisa(pesqDTO);
         ReservaPagina pagina = reservaService.listar(pesq);
         return reservaMapper.paraDTO(pagina);

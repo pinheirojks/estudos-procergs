@@ -8,13 +8,13 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.security.SecuritySchemes;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.modelmapper.ModelMapper;
 
 import estudos.procergs.dto.EstacaoTrabalhoDTO;
 import estudos.procergs.dto.EstacaoTrabalhoPesqDTO;
 import estudos.procergs.entity.EstacaoTrabalho;
 import estudos.procergs.enums.TipoEstacaoTrabalhoEnum;
 import estudos.procergs.infra.interceptor.AutorizacaoInterceptor;
+import estudos.procergs.mapper.EstacaoTrabalhoMapper;
 import estudos.procergs.service.EstacaoTrabalhoService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
@@ -41,15 +41,16 @@ public class EstacaoTrabalhoResource {
     @Inject
     private EstacaoTrabalhoService estacaoTrabalhoService;
 
-    private ModelMapper mapper = new ModelMapper();
+    @Inject
+    private EstacaoTrabalhoMapper estacaoTrabalhoMapper;
 
     @GET
     @Operation(description = "Lista as estações de trabalho pesquisando por código, tipo e ativo")
     public List<EstacaoTrabalhoDTO> listar(@BeanParam EstacaoTrabalhoPesqDTO dto) {
-        EstacaoTrabalho pesq = mapper.map(dto, EstacaoTrabalho.class);
+        EstacaoTrabalho pesq = estacaoTrabalhoMapper.paraEstacaoTrabalho(dto);
         pesq.setTipo(TipoEstacaoTrabalhoEnum.parseByName(dto.getTipo()));
         return estacaoTrabalhoService.listar(pesq).stream()
-                .map(u -> mapper.map(u, EstacaoTrabalhoDTO.class))
+                .map(estacao -> estacaoTrabalhoMapper.paraDTO(estacao))
                 .toList();
     }
 
@@ -58,24 +59,24 @@ public class EstacaoTrabalhoResource {
     @Operation(description = "Consulta uma estação de trabalho pelo seu ID")
     public EstacaoTrabalhoDTO consultar(@PathParam("id") Long id) {
         EstacaoTrabalho estacaoTrabalho = estacaoTrabalhoService.consultar(id);
-        return mapper.map(estacaoTrabalho, EstacaoTrabalhoDTO.class);
+        return estacaoTrabalhoMapper.paraDTO(estacaoTrabalho);
     }
 
     @POST
     @Operation(description = "Cria uma nova estação de trabalho")
     public EstacaoTrabalhoDTO incluir(EstacaoTrabalhoDTO dto) {
-        EstacaoTrabalho estacaoTrabalho = mapper.map(dto, EstacaoTrabalho.class);
+        EstacaoTrabalho estacaoTrabalho = estacaoTrabalhoMapper.paraEstacaoTrabalho(dto);
         estacaoTrabalho = estacaoTrabalhoService.incluir(estacaoTrabalho);
-        return mapper.map(estacaoTrabalho, EstacaoTrabalhoDTO.class);
+        return estacaoTrabalhoMapper.paraDTO(estacaoTrabalho);
     }
 
     @PUT
     @Path("{id}")
     @Operation(description = "Altera uma estação de trabalho")
     public EstacaoTrabalhoDTO alterar(@PathParam("id") Long id, EstacaoTrabalhoDTO dto) {
-        EstacaoTrabalho estacaoTrabalho = mapper.map(dto, EstacaoTrabalho.class);
+        EstacaoTrabalho estacaoTrabalho = estacaoTrabalhoMapper.paraEstacaoTrabalho(dto);
         estacaoTrabalho = estacaoTrabalhoService.alterar(id, estacaoTrabalho);
-        return mapper.map(estacaoTrabalho, EstacaoTrabalhoDTO.class);
+        return estacaoTrabalhoMapper.paraDTO(estacaoTrabalho);
     }
 
     @DELETE

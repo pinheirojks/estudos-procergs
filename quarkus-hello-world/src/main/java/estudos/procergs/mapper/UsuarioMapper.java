@@ -7,7 +7,9 @@ import estudos.procergs.dto.UsuarioDTO;
 import estudos.procergs.dto.UsuarioPesqDTO;
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class UsuarioMapper {
 
     private ModelMapper mapper = new ModelMapper();
@@ -28,5 +30,4 @@ public class UsuarioMapper {
         Usuario usuario = mapper.map(dto, Usuario.class);
         return usuario;
     }
-
 }

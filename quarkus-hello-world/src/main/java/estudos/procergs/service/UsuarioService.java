@@ -36,6 +36,10 @@ public class UsuarioService {
         return usuarioRepository.consultar(login, senha);
     }
 
+    public Usuario consultarUsuarioSistema() {
+       return consultar(1L);
+    }
+
     @Transactional
     public Usuario incluir(Usuario usuario) {
         this.verificarPermicoes();
@@ -120,14 +124,10 @@ public class UsuarioService {
             });
     }
 
-    public void verificarPermicoes() {
+    private void verificarPermicoes() {
         Usuario usuarioLogado = autorizacaoRepository.getAutorizacao().getUsuario();
         if(!PerfilUsuarioEnum.ADMINISTRADOR.equals(usuarioLogado.getPerfil())) {
             throw new NaoPermitidoException("Usuário sem permissão para esta operação.");
         }
-    }
-
-    public Usuario consultarUsuarioSistema() {
-       return consultar(1L);
     }
 }

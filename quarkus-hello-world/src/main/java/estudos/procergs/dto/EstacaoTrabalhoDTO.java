@@ -1,17 +1,12 @@
 package estudos.procergs.dto;
 
-import estudos.procergs.enums.TipoEstacaoTrabalhoEnum;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-
 public class EstacaoTrabalhoDTO {
 
     private Long id;
 
     private String codigo;
 
-    @Enumerated(EnumType.STRING)
-    private TipoEstacaoTrabalhoEnum tipo;
+    private TipoEstacaoTrabalhoDTO tipo;
 
     private Boolean ativo;
 
@@ -31,11 +26,11 @@ public class EstacaoTrabalhoDTO {
         this.codigo = codigo;
     }
 
-    public TipoEstacaoTrabalhoEnum getTipo() {
+    public TipoEstacaoTrabalhoDTO getTipo() {
         return tipo;
     }
 
-    public void setTipo(TipoEstacaoTrabalhoEnum tipo) {
+    public void setTipo(TipoEstacaoTrabalhoDTO tipo) {
         this.tipo = tipo;
     }
 
@@ -46,5 +41,4 @@ public class EstacaoTrabalhoDTO {
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
     }
-
 }

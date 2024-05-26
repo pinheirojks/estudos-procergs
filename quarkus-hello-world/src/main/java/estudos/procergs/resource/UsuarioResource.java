@@ -38,7 +38,8 @@ public class UsuarioResource {
     @Inject
     private UsuarioService usuarioService;
 
-    private UsuarioMapper usuarioMapper = new UsuarioMapper();
+    @Inject
+    private UsuarioMapper usuarioMapper;
 
     @GET
     @Operation(description = "Lista os usuários pesquisando por login e ativo")
