@@ -44,8 +44,9 @@ public class UsuarioSoeService {
     if (StringUtils.isBlank(siglaOrgao)) {
       throw new WebApplicationException("Infome o órgão.");
     }
-
+    siglaOrgao = siglaOrgao.toUpperCase();
     urlConexao.append("?siglaOrganizacao=").append(siglaOrgao);
+
     if (Objects.nonNull(matricula)) {
       urlConexao.append("&matricula=").append(matricula);
     }
