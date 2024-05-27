@@ -63,8 +63,10 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
         }
     }
 
-    // public Usuario incluir(Usuario usuario) {
-    //     usuario.persist();
-    //     return usuario;
-    // }
+    public List<Usuario> listarDuplicados(String login) {
+        Usuario pesq = new Usuario();
+        pesq.setAtivo(true);
+        pesq.setLogin(login);
+        return this.listar(pesq);
+    }
 }

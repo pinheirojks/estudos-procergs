@@ -122,11 +122,8 @@ public class UsuarioService {
     }
 
     private void proibirDuplicacao(Usuario usuario) {
-        Usuario pesq = new Usuario();
-        pesq.setAtivo(true);
-        pesq.setLogin(usuario.getLogin());
-        this.listar(pesq).stream()
-            .filter(u -> !u.getId().equals(usuario.getId()))  //Para não considerar a proria entidade numa alteracao
+        usuarioRepository.listarDuplicados(usuario.getLogin()).stream()
+            .filter(u -> !u.getId().equals(usuario.getId()))  //Para não considerar a propria entidade numa alteracao
             .findAny()
             .ifPresent(u -> {
                 throw new WebApplicationException("Login já cadastrado.");

@@ -62,7 +62,7 @@ public class UsuarioServiceInclusaoTest {
             .filter(u -> u.getLogin().equalsIgnoreCase(usuarioInformado.getLogin()))
             .toList();
 
-        Mockito.when(usuarioRepositoryMock.listar(Mockito.any())).thenReturn(usuariosDuplicados);
+        Mockito.when(usuarioRepositoryMock.listarDuplicados(Mockito.any())).thenReturn(usuariosDuplicados);
         this.tentarIncluir();
         Assertions.assertNull(excessaoLancada, "Nao deve haver erro");
         Assertions.assertNotNull(usuarioRetornado, "Deve retornar um usuario nao nulo");
@@ -83,7 +83,7 @@ public class UsuarioServiceInclusaoTest {
             .filter(u -> u.getLogin().equalsIgnoreCase(usuarioInformado.getLogin()))
             .toList();
 
-        Mockito.when(usuarioRepositoryMock.listar(Mockito.any())).thenReturn(usuariosDuplicados);
+        Mockito.when(usuarioRepositoryMock.listarDuplicados(Mockito.any())).thenReturn(usuariosDuplicados);
         this.tentarIncluir();
         this.verificarExcessaoEsperada("Login já cadastrado.");
     }
