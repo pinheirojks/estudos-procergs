@@ -1,6 +1,7 @@
 package estudos.procergs.mapper;
 
 import org.modelmapper.ModelMapper;
+import java.util.Objects;
 
 import estudos.procergs.dto.PerfilUsuarioDTO;
 import estudos.procergs.dto.UsuarioDTO;
@@ -22,7 +23,9 @@ public class UsuarioMapper {
 
     public Usuario paraUsuario(UsuarioDTO dto) {
         Usuario usuario = mapper.map(dto, Usuario.class);
-        usuario.setPerfil(PerfilUsuarioEnum.parseByName(dto.getPerfil().getNome()));
+        if (Objects.nonNull(dto.getPerfil())) {
+            usuario.setPerfil(PerfilUsuarioEnum.parseByName(dto.getPerfil().getNome()));
+        }        
         return usuario;
     }
 

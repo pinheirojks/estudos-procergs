@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 public enum PerfilUsuarioEnum {
 
-    ADMINISTRADOR("Administrador"),
+    ADMINISTRADOR("Administrador"),    
     FUNCIONARIO("Funcionário");
 
     private final String descricao;

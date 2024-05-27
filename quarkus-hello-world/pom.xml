@@ -73,6 +73,10 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-jdbc-postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>
       <scope>test</scope>
     </dependency>
@@ -103,16 +107,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-			<groupId>com.procergs.acr</groupId>
-			<artifactId>prarqjava4</artifactId>
-			<version>2.1.6</version>
-		</dependency>
+      <groupId>com.procergs.acr</groupId>
+      <artifactId>prarqjava4</artifactId>
+      <version>2.1.6</version>
+    </dependency>
     <dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>8.0</version>
-			<scope>provided</scope>
-		</dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+      <version>8.0</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
   <build>
     <plugins>

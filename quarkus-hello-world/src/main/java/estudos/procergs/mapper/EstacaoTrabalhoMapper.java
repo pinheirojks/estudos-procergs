@@ -1,5 +1,7 @@
 package estudos.procergs.mapper;
 
+import java.util.Objects;
+
 import org.modelmapper.ModelMapper;
 
 import estudos.procergs.dto.EstacaoTrabalhoDTO;
@@ -22,7 +24,9 @@ public class EstacaoTrabalhoMapper {
 
     public EstacaoTrabalho paraEstacaoTrabalho(EstacaoTrabalhoDTO dto) {
         EstacaoTrabalho estacao = mapper.map(dto, EstacaoTrabalho.class);
-        estacao.setTipo(TipoEstacaoTrabalhoEnum.parseByName(dto.getTipo().getNome()));
+        if (Objects.nonNull(dto.getTipo())) {
+            estacao.setTipo(TipoEstacaoTrabalhoEnum.parseByName(dto.getTipo().getNome()));
+        }
         return estacao;
     }
 
