@@ -40,6 +40,13 @@ public class UsuarioServiceInclusaoTest {
 
     private List<Usuario> usuariosCadastrados;
 
+    private void inicializar(){
+        excessaoLancada = null;
+        usuarioRetornado = null;
+        usuariosCadastrados = new ArrayList<>();
+        usuariosCadastrados.add(this.criarUsuarioCadastrado(1L));
+    }
+
     @Test
     @Order(1)
     @DisplayName("Deve incluir com sucesso")
@@ -47,13 +54,38 @@ public class UsuarioServiceInclusaoTest {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuario(1L); 
+        usuarioInformado = this.criarUsuarioInformado(2L); 
         usuarioInformado.setId(null);
         usuarioInformado.setAtivo(null);
 
+        List<Usuario> usuariosDuplicados = usuariosCadastrados.stream()
+            .filter(u -> u.getLogin().equalsIgnoreCase(usuarioInformado.getLogin()))
+            .toList();
+
+        Mockito.when(usuarioRepositoryMock.listar(Mockito.any())).thenReturn(usuariosDuplicados);
         this.tentarIncluir();
         Assertions.assertNull(excessaoLancada, "Nao deve haver erro");
         Assertions.assertNotNull(usuarioRetornado, "Deve retornar um usuario nao nulo");
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Nao deve incluir com duplicacao")
+    public void naoDeveIncluirComDuplicacao() {
+        this.inicializar();
+
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+
+        usuarioInformado = this.criarUsuarioInformado(1L);  
+        usuarioInformado.setId(null);
+
+        List<Usuario> usuariosDuplicados = usuariosCadastrados.stream()
+            .filter(u -> u.getLogin().equalsIgnoreCase(usuarioInformado.getLogin()))
+            .toList();
+
+        Mockito.when(usuarioRepositoryMock.listar(Mockito.any())).thenReturn(usuariosDuplicados);
+        this.tentarIncluir();
+        this.verificarExcessaoEsperada("Login já cadastrado.");
     }
 
     @Test
@@ -63,7 +95,7 @@ public class UsuarioServiceInclusaoTest {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuario(2L);  
+        usuarioInformado = this.criarUsuarioInformado(2L);  
         usuarioInformado.setId(null);
         usuarioInformado.setLogin(null);
         
@@ -78,7 +110,7 @@ public class UsuarioServiceInclusaoTest {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuario(2L);  
+        usuarioInformado = this.criarUsuarioInformado(2L);  
         usuarioInformado.setId(null);
         usuarioInformado.setSenha(null);
         
@@ -93,35 +125,12 @@ public class UsuarioServiceInclusaoTest {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuario(2L);  
+        usuarioInformado = this.criarUsuarioInformado(2L);  
         usuarioInformado.setId(null);
         usuarioInformado.setPerfil(null);
         
         this.tentarIncluir();
         this.verificarExcessaoEsperada("Informe o perfil.");
-    }
-
-    @Test
-    @Order(5)
-    @DisplayName("Nao deve incluir com duplicacao")
-    public void naoDeveIncluirComDuplicacao() {
-        this.inicializar();
-
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
-        Mockito.when(usuarioRepositoryMock.listar(Mockito.any())).thenReturn(usuariosCadastrados);
-
-        usuarioInformado = this.criarUsuario(1L);  
-        usuarioInformado.setId(null);
-        
-        this.tentarIncluir();
-        this.verificarExcessaoEsperada("Login já cadastrado.");
-    }
-
-    private void inicializar(){
-        excessaoLancada = null;
-        usuarioRetornado = null;
-        usuariosCadastrados = new ArrayList<>();
-        usuariosCadastrados.add(this.criarUsuario(1L));
     }
 
     private void tentarIncluir() {
@@ -138,7 +147,7 @@ public class UsuarioServiceInclusaoTest {
         Assertions.assertNull(usuarioRetornado, "Nao deve retornar um usuario");
     }
 
-    private Usuario criarUsuario(Long id) {
+    private Usuario criarUsuarioCadastrado(Long id) {
         Usuario usuario = new Usuario();
         usuario.setId(id);
         usuario.setLogin("usuario" + id.toString());
@@ -148,9 +157,19 @@ public class UsuarioServiceInclusaoTest {
         return usuario;
     }  
 
+    private Usuario criarUsuarioInformado(Long id) {
+        Usuario usuario = new Usuario();
+        usuario.setId(id);
+        usuario.setLogin("usuario" + id.toString());
+        usuario.setSenha("usuario" + id.toString());
+        usuario.setPerfil(PerfilUsuarioEnum.ADMINISTRADOR);
+        usuario.setAtivo(true);
+        return usuario;
+    } 
+
     private AutorizacaoDTO criarAutorizacao() {
         AutorizacaoDTO autorizacao = new AutorizacaoDTO();
-        autorizacao.setUsuario(criarUsuario(1L));
+        autorizacao.setUsuario(criarUsuarioCadastrado(1L));
         autorizacao.setIp("127.0.0.1");
         return autorizacao;
     }
