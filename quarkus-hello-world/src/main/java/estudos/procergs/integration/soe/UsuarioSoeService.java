@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 
-import javax.json.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -19,6 +18,7 @@ import estudos.procergs.infra.framework.SOEAuthClient;
 import estudos.procergs.util.TextoUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.ws.rs.WebApplicationException;
 
 @ApplicationScoped
@@ -28,10 +28,10 @@ public class UsuarioSoeService {
   private String urlSoe;
 
   @ConfigProperty(name = "ws.soeauth.client.id")
-  private String propWsSoeAuthId;
+  private String soeAuthClientId;
 
   @ConfigProperty(name = "ws.soeauth.client.secret")
-  private String propWsSoeAuthSenha;
+  private String soeAuthSecret;
 
   @Inject
   private SOEAuthClient soeAuthClient; 
@@ -60,7 +60,7 @@ public class UsuarioSoeService {
       URL url = new URL(urlConexao.toString());
       HttpURLConnection conexao = (HttpURLConnection) url.openConnection();
       conexao.setRequestMethod("GET");
-      JsonObject jsonObject = soeAuthClient.consulta(propWsSoeAuthId, propWsSoeAuthSenha);
+      JsonObject jsonObject = soeAuthClient.consulta(soeAuthClientId, soeAuthSecret);
       conexao.setRequestProperty("Authorization", String.format("Bearer %s", jsonObject.getString("access_token")));
       
       BufferedReader br = new BufferedReader(new InputStreamReader(conexao.getInputStream(), "UTF-8"));
@@ -85,7 +85,7 @@ public class UsuarioSoeService {
       URL url = new URL(urlConexao.toString());
       HttpURLConnection conexao = (HttpURLConnection) url.openConnection();
       conexao.setRequestMethod("GET");
-      JsonObject jsonObject = soeAuthClient.consulta(propWsSoeAuthId, propWsSoeAuthSenha);
+      JsonObject jsonObject = soeAuthClient.consulta(soeAuthClientId, soeAuthSecret);
       conexao.setRequestProperty("Authorization", String.format("Bearer %s", jsonObject.getString("access_token")));
       
       BufferedReader br = new BufferedReader(new InputStreamReader(conexao.getInputStream(), "UTF-8"));

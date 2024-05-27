@@ -3,8 +3,9 @@ package estudos.procergs.integration.soe;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import javax.json.Json;
-import javax.json.JsonObject;
+
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 public class TokenDto implements Serializable {
 

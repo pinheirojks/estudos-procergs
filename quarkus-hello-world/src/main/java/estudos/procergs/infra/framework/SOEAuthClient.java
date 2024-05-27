@@ -5,9 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +29,18 @@ import com.nimbusds.openid.connect.sdk.op.OIDCProviderMetadata;
 
 import estudos.procergs.integration.soe.TokenDto;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 @ApplicationScoped
 public class SOEAuthClient {
+
   private static final Integer  DEFAULT_CONNECT_TIMEOUT = 1000;
 
   private static final Integer  DEFAULT_READ_TIMEOUT    = 5000;
+
+  @ConfigProperty(name = "procergs.soeauth.issuer")
+  private String issuerString;
 
   private Logger                log                     = LoggerFactory.getLogger(this.getClass());
 
@@ -90,7 +94,7 @@ public class SOEAuthClient {
 
   private TokenRequest buildTokenRequest(String id, String secret) {
     try {
-      Issuer issuer = new Issuer(System.getProperty("procergs.soeauth.issuer"));
+      Issuer issuer = new Issuer(issuerString);
       OIDCProviderMetadata metadata = OIDCProviderMetadata.resolve(issuer, DEFAULT_CONNECT_TIMEOUT, DEFAULT_READ_TIMEOUT);
 
       ClientAuthentication clientAuth = new ClientSecretPost(new ClientID(id), new Secret(secret));
