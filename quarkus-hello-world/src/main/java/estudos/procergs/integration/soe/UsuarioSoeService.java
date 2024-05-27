@@ -14,10 +14,11 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.procergs.soeauth.client.SOEAuthClient;
 
+import estudos.procergs.infra.framework.SOEAuthClient;
 import estudos.procergs.util.TextoUtil;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 
 @ApplicationScoped
@@ -32,8 +33,8 @@ public class UsuarioSoeService {
   @ConfigProperty(name = "ws.soeauth.client.secret")
   private String propWsSoeAuthSenha;
 
-  //@Inject
-  private SOEAuthClient soeAuthClient = new SOEAuthClient(); // TODO: Esta parte não deve funcionar
+  @Inject
+  private SOEAuthClient soeAuthClient; 
 
   private final static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -59,7 +60,7 @@ public class UsuarioSoeService {
       URL url = new URL(urlConexao.toString());
       HttpURLConnection conexao = (HttpURLConnection) url.openConnection();
       conexao.setRequestMethod("GET");
-      JsonObject jsonObject = soeAuthClient.clientCredentials(propWsSoeAuthId, propWsSoeAuthSenha);
+      JsonObject jsonObject = soeAuthClient.consulta(propWsSoeAuthId, propWsSoeAuthSenha);
       conexao.setRequestProperty("Authorization", String.format("Bearer %s", jsonObject.getString("access_token")));
       
       BufferedReader br = new BufferedReader(new InputStreamReader(conexao.getInputStream(), "UTF-8"));
@@ -84,7 +85,7 @@ public class UsuarioSoeService {
       URL url = new URL(urlConexao.toString());
       HttpURLConnection conexao = (HttpURLConnection) url.openConnection();
       conexao.setRequestMethod("GET");
-      JsonObject jsonObject = soeAuthClient.clientCredentials(propWsSoeAuthId, propWsSoeAuthSenha);
+      JsonObject jsonObject = soeAuthClient.consulta(propWsSoeAuthId, propWsSoeAuthSenha);
       conexao.setRequestProperty("Authorization", String.format("Bearer %s", jsonObject.getString("access_token")));
       
       BufferedReader br = new BufferedReader(new InputStreamReader(conexao.getInputStream(), "UTF-8"));
