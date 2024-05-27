@@ -44,7 +44,7 @@ public class UsuarioServiceInclusaoTest {
         excessaoLancada = null;
         usuarioRetornado = null;
         usuariosCadastrados = new ArrayList<>();
-        usuariosCadastrados.add(this.criarUsuarioCadastrado(1L));
+        usuariosCadastrados.add(this.criarUsuario(1L));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class UsuarioServiceInclusaoTest {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuarioInformado(2L); 
+        usuarioInformado = this.criarUsuario(2L); 
         usuarioInformado.setId(null);
         usuarioInformado.setAtivo(null);
 
@@ -69,14 +69,14 @@ public class UsuarioServiceInclusaoTest {
     }
 
     @Test
-    @Order(5)
+    @Order(2)
     @DisplayName("Nao deve incluir com duplicacao")
     public void naoDeveIncluirComDuplicacao() {
         this.inicializar();
 
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuarioInformado(1L);  
+        usuarioInformado = this.criarUsuario(1L);  
         usuarioInformado.setId(null);
 
         List<Usuario> usuariosDuplicados = usuariosCadastrados.stream()
@@ -89,13 +89,13 @@ public class UsuarioServiceInclusaoTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     @DisplayName("Nao deve incluir sem login")
     public void naoDeveIncluirSemLogin() {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuarioInformado(2L);  
+        usuarioInformado = this.criarUsuario(2L);  
         usuarioInformado.setId(null);
         usuarioInformado.setLogin(null);
         
@@ -104,13 +104,13 @@ public class UsuarioServiceInclusaoTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     @DisplayName("Nao deve incluir sem senha")
     public void naoDeveIncluirSemSenha() {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuarioInformado(2L);  
+        usuarioInformado = this.criarUsuario(2L);  
         usuarioInformado.setId(null);
         usuarioInformado.setSenha(null);
         
@@ -119,13 +119,13 @@ public class UsuarioServiceInclusaoTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @DisplayName("Nao deve incluir sem perfil")
     public void naoDeveIncluirSemPerfil() {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuarioInformado(2L);  
+        usuarioInformado = this.criarUsuario(2L);  
         usuarioInformado.setId(null);
         usuarioInformado.setPerfil(null);
         
@@ -147,17 +147,7 @@ public class UsuarioServiceInclusaoTest {
         Assertions.assertNull(usuarioRetornado, "Nao deve retornar um usuario");
     }
 
-    private Usuario criarUsuarioCadastrado(Long id) {
-        Usuario usuario = new Usuario();
-        usuario.setId(id);
-        usuario.setLogin("usuario" + id.toString());
-        usuario.setSenha("usuario" + id.toString());
-        usuario.setPerfil(PerfilUsuarioEnum.ADMINISTRADOR);
-        usuario.setAtivo(true);
-        return usuario;
-    }  
-
-    private Usuario criarUsuarioInformado(Long id) {
+    private Usuario criarUsuario(Long id) {
         Usuario usuario = new Usuario();
         usuario.setId(id);
         usuario.setLogin("usuario" + id.toString());
@@ -169,7 +159,7 @@ public class UsuarioServiceInclusaoTest {
 
     private AutorizacaoDTO criarAutorizacao() {
         AutorizacaoDTO autorizacao = new AutorizacaoDTO();
-        autorizacao.setUsuario(criarUsuarioCadastrado(1L));
+        autorizacao.setUsuario(criarUsuario(1L));
         autorizacao.setIp("127.0.0.1");
         return autorizacao;
     }
