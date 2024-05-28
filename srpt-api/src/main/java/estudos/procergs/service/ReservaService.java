@@ -9,6 +9,7 @@ import estudos.procergs.entity.ReservaPagina;
 import estudos.procergs.entity.ReservaPesq;
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.TipoReservaEnum;
+import estudos.procergs.infra.framework.AbstractService;
 import estudos.procergs.repository.ReservaRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -16,7 +17,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 
 @ApplicationScoped
-public class ReservaService {
+public class ReservaService extends AbstractService {
 
     @Inject
     private ReservaRepository repository;
@@ -36,10 +37,10 @@ public class ReservaService {
 
     @Transactional
     public Reserva incluir(Reserva reserva) {
-        this.exigirUsuario(reserva);
-        this.exigirEstacaoTrabalho(reserva);
-        this.exigirData(reserva);
-        this.exigirTipo(reserva);
+        this.exigir(reserva.getUsuario(), "Informe o Usuário.");
+        this.exigir(reserva.getEstacaoTrabalho(), "Informe a estação de trabalho.");
+        this.exigir(reserva.getData(), "Informe a data.");
+        this.exigir(reserva.getTipo(), "Informe o tipo de reserva.");
 
         this.complementar(reserva);
 
@@ -56,10 +57,11 @@ public class ReservaService {
 
     @Transactional
     public Reserva alterar(Long id, Reserva r) {
-        this.exigirUsuario(r);
-        this.exigirEstacaoTrabalho(r);
-        this.exigirData(r);
-        this.exigirTipo(r);
+        this.exigir(id, "Informe o ID.");
+        this.exigir(r.getUsuario(), "Informe o Usuário.");
+        this.exigir(r.getEstacaoTrabalho(), "Informe a estação de trabalho.");
+        this.exigir(r.getData(), "Informe a data.");
+        this.exigir(r.getTipo(), "Informe o tipo de reserva.");
 
         this.complementar(r);
 
@@ -97,31 +99,6 @@ public class ReservaService {
         reservas.stream()
             .forEach(reserva -> repository.delete(reserva));
         return quantidade;
-    }
-
-
-    private void exigirUsuario(Reserva reserva) {
-        if (reserva.getUsuario() == null) {
-            throw new WebApplicationException("Informe o usuário.");
-        }
-    }
-
-    private void exigirEstacaoTrabalho(Reserva reserva) {
-        if (reserva.getEstacaoTrabalho() == null) {
-            throw new WebApplicationException("Informe a estação de trabalho.");
-        }
-    }
-
-    private void exigirData(Reserva reserva) {
-        if (reserva.getData() == null) {
-            throw new WebApplicationException("Informe a data.");
-        }
-    }
-
-    private void exigirTipo(Reserva reserva) {
-        if (reserva.getTipo() == null) {
-            throw new WebApplicationException("Informe o tipo de reserva.");
-        }
     }
 
     private void validarData(Reserva reserva) {
