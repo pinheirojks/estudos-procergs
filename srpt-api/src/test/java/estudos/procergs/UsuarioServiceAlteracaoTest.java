@@ -1,7 +1,6 @@
 package estudos.procergs;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
 import estudos.procergs.infra.excecao.NaoPermitidoException;
 import io.quarkus.test.junit.QuarkusTest;
@@ -124,14 +122,6 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
 
     private void mocarConsulta(Long id) {
         Mockito.when(usuarioRepositoryMock.findById(Mockito.any())).thenReturn(this.criarUsuario(id));
-    }
-
-    private void mocarUsuariosDuplicados() {
-        List<Usuario> usuariosDuplicados = usuariosCadastrados.stream()
-            .filter(u -> u.getLogin().equalsIgnoreCase(usuarioInformado.getLogin()))
-            .toList();
-
-        Mockito.when(usuarioRepositoryMock.listarDuplicados(Mockito.any())).thenReturn(usuariosDuplicados);
     }
 
     private void tentarAlterar() {

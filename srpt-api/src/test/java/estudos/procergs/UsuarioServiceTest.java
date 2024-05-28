@@ -3,6 +3,7 @@ package estudos.procergs;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
+import org.mockito.Mockito;
 
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
@@ -52,6 +53,14 @@ public abstract class UsuarioServiceTest {
         autorizacao.getUsuario().setPerfil(perfil);
         autorizacao.setIp("127.0.0.1");
         return autorizacao;
+    }
+
+    protected void mocarUsuariosDuplicados() {
+        List<Usuario> usuariosDuplicados = usuariosCadastrados.stream()
+            .filter(u -> u.getLogin().equalsIgnoreCase(usuarioInformado.getLogin()))
+            .toList();
+
+        Mockito.when(usuarioRepositoryMock.listarDuplicados(Mockito.any())).thenReturn(usuariosDuplicados);
     }
 
     protected void verificarErroPermissao(String mensagemEsperada) {
