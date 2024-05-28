@@ -59,6 +59,21 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
 
     @Test
     @Order(3)
+    @DisplayName("Nao deve alterar sem ID")
+    public void naoDeveAlterarSemId() {
+        this.inicializar();
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
+
+        usuarioInformado = this.criarUsuario(2L);
+        usuarioInformado.setId(null);
+        
+        this.mocarConsulta(usuarioInformado.getId());
+        this.tentarAlterar();
+        this.verificarErroRegraNegocio("Informe o ID.");
+    }
+
+    @Test
+    @Order(4)
     @DisplayName("Nao deve alterar sem login")
     public void naoDeveAlterarSemLogin() {
         this.inicializar();
@@ -74,7 +89,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     @DisplayName("Nao deve alterar sem senha")
     public void naoDeveAlterarSemSenha() {
         this.inicializar();
@@ -90,7 +105,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     @DisplayName("Nao deve alterar sem perfil")
     public void naoDeveAlterarSemPerfil() {
         this.inicializar();
@@ -106,7 +121,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     @DisplayName("Nao deve alterar com funcionario logado")
     public void naoDeveAlterarComFuncionarioLogado() {
         this.inicializar();
@@ -118,10 +133,6 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
         this.mocarUsuariosDuplicados();
         this.tentarAlterar();
         this.verificarErroPermissao("Usuário sem permissão para esta operação.");
-    }
-
-    private void mocarConsulta(Long id) {
-        Mockito.when(usuarioRepositoryMock.findById(Mockito.any())).thenReturn(this.criarUsuario(id));
     }
 
     private void tentarAlterar() {

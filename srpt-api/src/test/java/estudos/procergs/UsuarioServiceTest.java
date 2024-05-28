@@ -1,6 +1,7 @@
 package estudos.procergs;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
@@ -53,6 +54,12 @@ public abstract class UsuarioServiceTest {
         autorizacao.getUsuario().setPerfil(perfil);
         autorizacao.setIp("127.0.0.1");
         return autorizacao;
+    }
+
+    protected void mocarConsulta(Long id) {
+        if (Objects.nonNull(id)) {
+            Mockito.when(usuarioRepositoryMock.findById(Mockito.any())).thenReturn(this.criarUsuario(id));
+        }
     }
 
     protected void mocarUsuariosDuplicados() {
