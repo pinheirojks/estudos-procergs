@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
+import estudos.procergs.infra.excecao.NaoPermitidoException;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.WebApplicationException;
 
@@ -18,7 +19,7 @@ import jakarta.ws.rs.WebApplicationException;
 public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
 
     private void inicializar(){
-        excessaoLancada = null;
+        erroRegraNegocio = null;
         usuarioRetornado = null;
         usuariosCadastrados = new ArrayList<>();
         usuariosCadastrados.add(this.criarUsuario(1L));
@@ -37,7 +38,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
 
         this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        Assertions.assertNull(excessaoLancada, "Nao deve haver erro");
+        Assertions.assertNull(erroRegraNegocio, "Nao deve haver erro");
         Assertions.assertNotNull(usuarioRetornado, "Deve retornar um usuario nao nulo");
     }
 
@@ -54,7 +55,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
 
         this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarErroEsperado("Login já cadastrado.");
+        this.verificarErroRegraNegocio("Login já cadastrado.");
     }
 
     @Test
@@ -70,7 +71,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
         
         this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarErroEsperado("Informe o login.");
+        this.verificarErroRegraNegocio("Informe o login.");
     }
 
     @Test
@@ -86,7 +87,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
         
         this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarErroEsperado("Informe a senha.");
+        this.verificarErroRegraNegocio("Informe a senha.");
     }
 
     @Test
@@ -102,7 +103,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
         
         this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarErroEsperado("Informe o perfil.");
+        this.verificarErroRegraNegocio("Informe o perfil.");
     }
 
     @Test
@@ -118,7 +119,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
 
         this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarErroEsperado("Usuário sem permissão para esta operação.");
+        this.verificarErroPermissao("Usuário sem permissão para esta operação.");
     }
 
     private void mocarUsuariosDuplicados() {
@@ -132,8 +133,10 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
     private void tentarIncluir() {
         try {
             usuarioRetornado = usuarioService.incluir(usuarioInformado);
+        } catch (NaoPermitidoException e) {
+            erroPermissao = e;
         } catch (WebApplicationException e) {
-            excessaoLancada = e;
+            erroRegraNegocio = e;
         }
     }
 }

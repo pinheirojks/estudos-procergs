@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
+import estudos.procergs.infra.excecao.NaoPermitidoException;
 import estudos.procergs.infra.interceptor.AutorizacaoDTO;
 import estudos.procergs.infra.interceptor.AutorizacaoRepository;
 import estudos.procergs.repository.UsuarioRepository;
@@ -29,15 +30,11 @@ public abstract class UsuarioServiceTest {
 
     protected Usuario usuarioRetornado;
 
-    protected WebApplicationException excessaoLancada;
+    protected WebApplicationException erroRegraNegocio;
+
+    protected NaoPermitidoException erroPermissao;
 
     protected List<Usuario> usuariosCadastrados;
-
-    protected void verificarErroEsperado(String mensagemEsperada) {
-        Assertions.assertNotNull(excessaoLancada, "Deve haver erro");
-        Assertions.assertEquals(mensagemEsperada, excessaoLancada.getMessage(), "Deve informar a mensagem de erro correta");
-        Assertions.assertNull(usuarioRetornado, "Nao deve retornar um usuario");
-    }
 
     protected Usuario criarUsuario(Long id) {
         Usuario usuario = new Usuario();
@@ -55,5 +52,17 @@ public abstract class UsuarioServiceTest {
         autorizacao.getUsuario().setPerfil(perfil);
         autorizacao.setIp("127.0.0.1");
         return autorizacao;
+    }
+
+    protected void verificarErroPermissao(String mensagemEsperada) {
+        Assertions.assertNotNull(erroPermissao, "Deve haver erro");
+        Assertions.assertEquals(mensagemEsperada, erroPermissao.getMessage(), "Deve informar a mensagem de erro correta");
+        Assertions.assertNull(usuarioRetornado, "Nao deve retornar um usuario");
+    }
+
+    protected void verificarErroRegraNegocio(String mensagemEsperada) {
+        Assertions.assertNotNull(erroRegraNegocio, "Deve haver erro");
+        Assertions.assertEquals(mensagemEsperada, erroRegraNegocio.getMessage(), "Deve informar a mensagem de erro correta");
+        Assertions.assertNull(usuarioRetornado, "Nao deve retornar um usuario");
     }
 }
