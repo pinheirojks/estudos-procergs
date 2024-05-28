@@ -106,7 +106,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     }
 
     @Test
-    @Order(2)
+    @Order(6)
     @DisplayName("Nao deve alterar com funcionario logado")
     public void naoDeveAlterarComFuncionarioLogado() {
         this.inicializar();
