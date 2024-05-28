@@ -10,36 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import estudos.procergs.entity.Usuario;
-import estudos.procergs.enums.PerfilUsuarioEnum;
-import estudos.procergs.infra.interceptor.AutorizacaoDTO;
-import estudos.procergs.infra.interceptor.AutorizacaoRepository;
-import estudos.procergs.repository.UsuarioRepository;
-import estudos.procergs.service.UsuarioService;
-import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 
 @QuarkusTest
-public class UsuarioServiceInclusaoTest {
-
-    @Inject
-    private UsuarioService usuarioService;
-
-    @InjectMock
-    private AutorizacaoRepository autorizacaoRepositoryMock;
-
-    @InjectMock
-    private UsuarioRepository usuarioRepositoryMock;
-
-    private Usuario usuarioInformado;
-
-    private Usuario usuarioRetornado;
-
-    private WebApplicationException excessaoLancada;
-
-    private List<Usuario> usuariosCadastrados;
-
+public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
+    
     private void inicializar(){
         excessaoLancada = null;
         usuarioRetornado = null;
@@ -58,14 +34,18 @@ public class UsuarioServiceInclusaoTest {
         usuarioInformado.setId(null);
         usuarioInformado.setAtivo(null);
 
+        this.mocarUsuariosDuplicados();
+        this.tentarIncluir();
+        Assertions.assertNull(excessaoLancada, "Nao deve haver erro");
+        Assertions.assertNotNull(usuarioRetornado, "Deve retornar um usuario nao nulo");
+    }
+
+    private void mocarUsuariosDuplicados() {
         List<Usuario> usuariosDuplicados = usuariosCadastrados.stream()
             .filter(u -> u.getLogin().equalsIgnoreCase(usuarioInformado.getLogin()))
             .toList();
 
         Mockito.when(usuarioRepositoryMock.listarDuplicados(Mockito.any())).thenReturn(usuariosDuplicados);
-        this.tentarIncluir();
-        Assertions.assertNull(excessaoLancada, "Nao deve haver erro");
-        Assertions.assertNotNull(usuarioRetornado, "Deve retornar um usuario nao nulo");
     }
 
     @Test
@@ -79,13 +59,9 @@ public class UsuarioServiceInclusaoTest {
         usuarioInformado = this.criarUsuario(1L);  
         usuarioInformado.setId(null);
 
-        List<Usuario> usuariosDuplicados = usuariosCadastrados.stream()
-            .filter(u -> u.getLogin().equalsIgnoreCase(usuarioInformado.getLogin()))
-            .toList();
-
-        Mockito.when(usuarioRepositoryMock.listarDuplicados(Mockito.any())).thenReturn(usuariosDuplicados);
+        this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarExcessaoEsperada("Login já cadastrado.");
+        this.verificarErroEsperado("Login já cadastrado.");
     }
 
     @Test
@@ -99,8 +75,9 @@ public class UsuarioServiceInclusaoTest {
         usuarioInformado.setId(null);
         usuarioInformado.setLogin(null);
         
+        this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarExcessaoEsperada("Informe o login.");
+        this.verificarErroEsperado("Informe o login.");
     }
 
     @Test
@@ -114,8 +91,9 @@ public class UsuarioServiceInclusaoTest {
         usuarioInformado.setId(null);
         usuarioInformado.setSenha(null);
         
+        this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarExcessaoEsperada("Informe a senha.");
+        this.verificarErroEsperado("Informe a senha.");
     }
 
     @Test
@@ -129,8 +107,9 @@ public class UsuarioServiceInclusaoTest {
         usuarioInformado.setId(null);
         usuarioInformado.setPerfil(null);
         
+        this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarExcessaoEsperada("Informe o perfil.");
+        this.verificarErroEsperado("Informe o perfil.");
     }
 
     private void tentarIncluir() {
@@ -139,28 +118,5 @@ public class UsuarioServiceInclusaoTest {
         } catch (WebApplicationException e) {
             excessaoLancada = e;
         }
-    }
-
-    private void verificarExcessaoEsperada(String mensagemEsperada) {
-        Assertions.assertNotNull(excessaoLancada, "Deve haver erro");
-        Assertions.assertEquals(mensagemEsperada, excessaoLancada.getMessage(), "Deve informar a mensagem de erro correta");
-        Assertions.assertNull(usuarioRetornado, "Nao deve retornar um usuario");
-    }
-
-    private Usuario criarUsuario(Long id) {
-        Usuario usuario = new Usuario();
-        usuario.setId(id);
-        usuario.setLogin("usuario" + id.toString());
-        usuario.setSenha("usuario" + id.toString());
-        usuario.setPerfil(PerfilUsuarioEnum.ADMINISTRADOR);
-        usuario.setAtivo(true);
-        return usuario;
-    } 
-
-    private AutorizacaoDTO criarAutorizacao() {
-        AutorizacaoDTO autorizacao = new AutorizacaoDTO();
-        autorizacao.setUsuario(criarUsuario(1L));
-        autorizacao.setIp("127.0.0.1");
-        return autorizacao;
     }
 }

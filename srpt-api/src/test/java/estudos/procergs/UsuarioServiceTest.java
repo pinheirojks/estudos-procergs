@@ -1,50 +1,58 @@
 package estudos.procergs;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
+import estudos.procergs.infra.interceptor.AutorizacaoDTO;
+import estudos.procergs.infra.interceptor.AutorizacaoRepository;
+import estudos.procergs.repository.UsuarioRepository;
 import estudos.procergs.service.UsuarioService;
-import io.quarkus.test.junit.QuarkusMock;
-import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.InjectMock;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
 
-@QuarkusTest
-public class UsuarioServiceTest {
+public abstract class UsuarioServiceTest {
 
     @Inject
-    UsuarioService usuarioService;
+    protected UsuarioService usuarioService;
 
-    @BeforeAll
-    public static void setup(){
-        UsuarioService mock = Mockito.mock(UsuarioService.class);
-        //Mockito.when(mock.verificarPermicoes()).thenReturn(true);
-        QuarkusMock.installMockForType(mock, UsuarioService.class);
+    @InjectMock
+    protected AutorizacaoRepository autorizacaoRepositoryMock;
+
+    @InjectMock
+    protected UsuarioRepository usuarioRepositoryMock;
+
+    protected Usuario usuarioInformado;
+
+    protected Usuario usuarioRetornado;
+
+    protected WebApplicationException excessaoLancada;
+
+    protected List<Usuario> usuariosCadastrados;
+
+    protected void verificarErroEsperado(String mensagemEsperada) {
+        Assertions.assertNotNull(excessaoLancada, "Deve haver erro");
+        Assertions.assertEquals(mensagemEsperada, excessaoLancada.getMessage(), "Deve informar a mensagem de erro correta");
+        Assertions.assertNull(usuarioRetornado, "Nao deve retornar um usuario");
     }
 
-
-    @Test
-    @DisplayName("Teste de inclusão de usuário sem login")
-    @Order(1)
-    public void testIncluirUsuarioSemLogin() {
-        //QuarkusMock.installMockForInstance(new UsuarioRepository(), usuarioService);
+    protected Usuario criarUsuario(Long id) {
         Usuario usuario = new Usuario();
-        usuario.setSenha("123456");
+        usuario.setId(id);
+        usuario.setLogin("usuario" + id.toString());
+        usuario.setSenha("usuario" + id.toString());
         usuario.setPerfil(PerfilUsuarioEnum.ADMINISTRADOR);
-        //Assertions.assertThrows(WebApplicationException.class, () -> {
-        //    usuarioService.incluir(usuario);
-        //});
-        try {
-            usuarioService.incluir(usuario);
-        } catch (WebApplicationException e) {
-            Assertions.assertEquals("Login é obrigatório2", e.getMessage());
-        }
-    }
+        usuario.setAtivo(true);
+        return usuario;
+    } 
 
+    protected AutorizacaoDTO criarAutorizacao() {
+        AutorizacaoDTO autorizacao = new AutorizacaoDTO();
+        autorizacao.setUsuario(criarUsuario(1L));
+        autorizacao.setIp("127.0.0.1");
+        return autorizacao;
+    }
 }
