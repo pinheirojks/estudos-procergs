@@ -20,6 +20,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
 
     private void inicializar(){
         erroRegraNegocio = null;
+        erroPermissao = null;
         usuarioRetornado = null;
         usuariosCadastrados = new ArrayList<>();
         usuariosCadastrados.add(this.criarUsuario(1L));
