@@ -49,9 +49,10 @@ public abstract class UsuarioServiceTest {
         return usuario;
     } 
 
-    protected AutorizacaoDTO criarAutorizacao() {
+    protected AutorizacaoDTO criarAutorizacao(PerfilUsuarioEnum perfil) {
         AutorizacaoDTO autorizacao = new AutorizacaoDTO();
         autorizacao.setUsuario(criarUsuario(1L));
+        autorizacao.getUsuario().setPerfil(perfil);
         autorizacao.setIp("127.0.0.1");
         return autorizacao;
     }

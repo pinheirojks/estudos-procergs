@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import estudos.procergs.entity.Usuario;
+import estudos.procergs.enums.PerfilUsuarioEnum;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.WebApplicationException;
 
@@ -29,7 +30,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     @DisplayName("Deve alterar com sucesso")
     public void deveAlterarComSucesso() {
         this.inicializar();
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L); 
 
@@ -46,7 +47,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     public void naoDeveAlterarComDuplicacao() {
         this.inicializar();
 
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L);  
         usuarioInformado.setLogin("usuario1");
@@ -61,7 +62,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     @DisplayName("Nao deve alterar sem login")
     public void naoDeveAlterarSemLogin() {
         this.inicializar();
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L);
         usuarioInformado.setLogin(null);
@@ -77,7 +78,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     @DisplayName("Nao deve alterar sem senha")
     public void naoDeveAlterarSemSenha() {
         this.inicializar();
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L);  
         usuarioInformado.setSenha(null);
@@ -93,7 +94,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     @DisplayName("Nao deve alterar sem perfil")
     public void naoDeveAlterarSemPerfil() {
         this.inicializar();
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L); 
         usuarioInformado.setPerfil(null);
@@ -102,6 +103,21 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
         this.mocarUsuariosDuplicados();
         this.tentarAlterar();
         this.verificarErroEsperado("Informe o perfil.");
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Nao deve alterar com funcionario logado")
+    public void naoDeveAlterarComFuncionarioLogado() {
+        this.inicializar();
+
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.FUNCIONARIO));
+
+        usuarioInformado = this.criarUsuario(1L); 
+
+        this.mocarUsuariosDuplicados();
+        this.tentarAlterar();
+        this.verificarErroEsperado("Usuário sem permissão para esta operação.");
     }
 
     private void mocarConsulta(Long id) {

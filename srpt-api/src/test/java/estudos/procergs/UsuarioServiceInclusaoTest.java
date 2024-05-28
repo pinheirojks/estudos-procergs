@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import estudos.procergs.entity.Usuario;
+import estudos.procergs.enums.PerfilUsuarioEnum;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.WebApplicationException;
 
@@ -28,7 +29,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
     @DisplayName("Deve incluir com sucesso")
     public void deveIncluirComSucesso() {
         this.inicializar();
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L); 
         usuarioInformado.setId(null);
@@ -46,7 +47,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
     public void naoDeveIncluirComDuplicacao() {
         this.inicializar();
 
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(1L);  
         usuarioInformado.setId(null);
@@ -61,7 +62,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
     @DisplayName("Nao deve incluir sem login")
     public void naoDeveIncluirSemLogin() {
         this.inicializar();
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L);  
         usuarioInformado.setId(null);
@@ -77,7 +78,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
     @DisplayName("Nao deve incluir sem senha")
     public void naoDeveIncluirSemSenha() {
         this.inicializar();
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L);  
         usuarioInformado.setId(null);
@@ -93,7 +94,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
     @DisplayName("Nao deve incluir sem perfil")
     public void naoDeveIncluirSemPerfil() {
         this.inicializar();
-        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L);  
         usuarioInformado.setId(null);
@@ -102,6 +103,22 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
         this.mocarUsuariosDuplicados();
         this.tentarIncluir();
         this.verificarErroEsperado("Informe o perfil.");
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Nao deve incluir com funcionario logado")
+    public void naoDeveIncluirComFuncionarioLogado() {
+        this.inicializar();
+
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.FUNCIONARIO));
+
+        usuarioInformado = this.criarUsuario(1L);  
+        usuarioInformado.setId(null);
+
+        this.mocarUsuariosDuplicados();
+        this.tentarIncluir();
+        this.verificarErroEsperado("Usuário sem permissão para esta operação.");
     }
 
     private void mocarUsuariosDuplicados() {
