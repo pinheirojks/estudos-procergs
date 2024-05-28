@@ -8,6 +8,7 @@ import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
 import estudos.procergs.infra.excecao.NaoAutorizadoException;
 import estudos.procergs.infra.excecao.NaoPermitidoException;
+import estudos.procergs.infra.framework.AbstractService;
 import estudos.procergs.infra.interceptor.AutorizacaoRepository;
 import estudos.procergs.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,7 +17,7 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.WebApplicationException;
 
 @ApplicationScoped
-public class UsuarioService {
+public class UsuarioService extends AbstractService {
 
     @Inject
     private UsuarioRepository usuarioRepository;
@@ -43,9 +44,9 @@ public class UsuarioService {
     @Transactional
     public Usuario incluir(Usuario usuario) {
         this.verificarPermicoes();
-        this.exigirLogin(usuario);
-        this.exigirSenha(usuario);
-        this.exigirPerfil(usuario);
+        this.exigirString(usuario.getLogin(), "Informe o login.");
+        this.exigirString(usuario.getSenha(), "Informe a senha.");
+        this.exigir(usuario.getPerfil(), "Informe o perfil.");
         this.proibirDuplicacao(usuario);
 
         usuario.setAtivo(true);
@@ -56,11 +57,11 @@ public class UsuarioService {
     @Transactional
     public Usuario alterar(Long id, Usuario u) {
         this.verificarPermicoes();
-        this.exigirId(id);
-        this.exigirLogin(u);
-        this.exigirSenha(u);
-        this.exigirPerfil(u);
-        this.exigirAtivo(u);
+        this.exigir(u.getId(), "Informe o ID.");
+        this.exigirString(u.getLogin(), "Informe o login.");
+        this.exigirString(u.getSenha(), "Informe a senha.");
+        this.exigir(u.getPerfil(), "Informe o perfil.");
+        this.exigir(u.getAtivo(), "Informe se está ativo.");
         this.proibirDuplicacao(u);
 
         Usuario usuario = usuarioRepository.findById(id);
@@ -75,8 +76,9 @@ public class UsuarioService {
     @Transactional
     public void excluir(Long id) {
         this.verificarPermicoes();
+        this.exigir(id, "Informe o ID.");
         Usuario usuario = usuarioRepository.findById(id);
-        usuario.delete();
+        usuarioRepository.delete(usuario);
     }
 
     public void verificarLogin(String chave) {
@@ -96,36 +98,6 @@ public class UsuarioService {
         }
         String ip = loginSenhaIp[2];
         autorizacaoRepository.incluirAutorizacao(usuario, ip);
-    }
-
-    private void exigirId(Long id) {
-        if (id == null) {
-            throw new WebApplicationException("Informe o ID.");
-        }
-    }
-
-    private void exigirLogin(Usuario usuario) {
-        if (usuario.getLogin() == null) {
-            throw new WebApplicationException("Informe o login.");
-        }
-    }
-
-    private void exigirSenha(Usuario usuario) {
-        if (usuario.getSenha() == null) {
-            throw new WebApplicationException("Informe a senha.");
-        }
-    }
-
-    private void exigirPerfil(Usuario usuario) {
-        if (usuario.getPerfil() == null) {
-            throw new WebApplicationException("Informe o perfil.");
-        }
-    }
-
-    private void exigirAtivo(Usuario usuario) {
-        if (usuario.getAtivo() == null) {
-            throw new WebApplicationException("Informe se está ativo.");
-        }
     }
 
     private void proibirDuplicacao(Usuario usuario) {
