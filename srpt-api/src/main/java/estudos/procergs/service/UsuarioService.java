@@ -56,6 +56,7 @@ public class UsuarioService {
     @Transactional
     public Usuario alterar(Long id, Usuario u) {
         this.verificarPermicoes();
+        this.exigirId(id);
         this.exigirLogin(u);
         this.exigirSenha(u);
         this.exigirPerfil(u);
@@ -95,6 +96,12 @@ public class UsuarioService {
         }
         String ip = loginSenhaIp[2];
         autorizacaoRepository.incluirAutorizacao(usuario, ip);
+    }
+
+    private void exigirId(Long id) {
+        if (id == null) {
+            throw new WebApplicationException("Informe o ID.");
+        }
     }
 
     private void exigirLogin(Usuario usuario) {

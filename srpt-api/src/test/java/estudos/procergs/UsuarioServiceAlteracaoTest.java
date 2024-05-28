@@ -14,94 +14,98 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.WebApplicationException;
 
 @QuarkusTest
-public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
-
+public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
+    
     private void inicializar(){
         excessaoLancada = null;
         usuarioRetornado = null;
         usuariosCadastrados = new ArrayList<>();
         usuariosCadastrados.add(this.criarUsuario(1L));
+        usuariosCadastrados.add(this.criarUsuario(2L));
     }
 
     @Test
     @Order(1)
-    @DisplayName("Deve incluir com sucesso")
-    public void deveIncluirComSucesso() {
+    @DisplayName("Deve alterar com sucesso")
+    public void deveAlterarComSucesso() {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
         usuarioInformado = this.criarUsuario(2L); 
-        usuarioInformado.setId(null);
-        usuarioInformado.setAtivo(null);
 
+        this.mocarConsulta(usuarioInformado.getId());
         this.mocarUsuariosDuplicados();
-        this.tentarIncluir();
+        this.tentarAlterar();
         Assertions.assertNull(excessaoLancada, "Nao deve haver erro");
         Assertions.assertNotNull(usuarioRetornado, "Deve retornar um usuario nao nulo");
     }
 
     @Test
     @Order(2)
-    @DisplayName("Nao deve incluir com duplicacao")
-    public void naoDeveIncluirComDuplicacao() {
+    @DisplayName("Nao deve alterar com duplicacao")
+    public void naoDeveAlterarComDuplicacao() {
         this.inicializar();
 
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuario(1L);  
-        usuarioInformado.setId(null);
+        usuarioInformado = this.criarUsuario(2L);  
+        usuarioInformado.setLogin("usuario1");
 
         this.mocarUsuariosDuplicados();
-        this.tentarIncluir();
+        this.tentarAlterar();
         this.verificarErroEsperado("Login já cadastrado.");
     }
 
     @Test
     @Order(3)
-    @DisplayName("Nao deve incluir sem login")
-    public void naoDeveIncluirSemLogin() {
+    @DisplayName("Nao deve alterar sem login")
+    public void naoDeveAlterarSemLogin() {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuario(2L);  
-        usuarioInformado.setId(null);
+        usuarioInformado = this.criarUsuario(2L);
         usuarioInformado.setLogin(null);
         
+        this.mocarConsulta(usuarioInformado.getId());
         this.mocarUsuariosDuplicados();
-        this.tentarIncluir();
+        this.tentarAlterar();
         this.verificarErroEsperado("Informe o login.");
     }
 
     @Test
     @Order(4)
-    @DisplayName("Nao deve incluir sem senha")
-    public void naoDeveIncluirSemSenha() {
+    @DisplayName("Nao deve alterar sem senha")
+    public void naoDeveAlterarSemSenha() {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
         usuarioInformado = this.criarUsuario(2L);  
-        usuarioInformado.setId(null);
         usuarioInformado.setSenha(null);
         
+        this.mocarConsulta(usuarioInformado.getId());
         this.mocarUsuariosDuplicados();
-        this.tentarIncluir();
+        this.tentarAlterar();
         this.verificarErroEsperado("Informe a senha.");
     }
 
     @Test
     @Order(5)
-    @DisplayName("Nao deve incluir sem perfil")
-    public void naoDeveIncluirSemPerfil() {
+    @DisplayName("Nao deve alterar sem perfil")
+    public void naoDeveAlterarSemPerfil() {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao());
 
-        usuarioInformado = this.criarUsuario(2L);  
-        usuarioInformado.setId(null);
+        usuarioInformado = this.criarUsuario(2L); 
         usuarioInformado.setPerfil(null);
         
+        this.mocarConsulta(usuarioInformado.getId());
         this.mocarUsuariosDuplicados();
-        this.tentarIncluir();
+        this.tentarAlterar();
         this.verificarErroEsperado("Informe o perfil.");
+    }
+
+    private void mocarConsulta(Long id) {
+        Mockito.when(usuarioRepositoryMock.findById(Mockito.any())).thenReturn(this.criarUsuario(id));
     }
 
     private void mocarUsuariosDuplicados() {
@@ -112,9 +116,9 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
         Mockito.when(usuarioRepositoryMock.listarDuplicados(Mockito.any())).thenReturn(usuariosDuplicados);
     }
 
-    private void tentarIncluir() {
+    private void tentarAlterar() {
         try {
-            usuarioRetornado = usuarioService.incluir(usuarioInformado);
+            usuarioRetornado = usuarioService.alterar(usuarioInformado.getId(), usuarioInformado);
         } catch (WebApplicationException e) {
             excessaoLancada = e;
         }
