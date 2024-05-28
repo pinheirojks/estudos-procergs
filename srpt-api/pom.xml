@@ -117,6 +117,18 @@
       <version>8.0</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+			<groupId>com.procergs.acr</groupId>
+			<artifactId>PRSoeweb</artifactId>
+			<version>6.6.2</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.procergs.acr</groupId>
+			<artifactId>PRUtil_j2ee</artifactId>
+			<version>1.10.6</version>
+			<scope>provided</scope>
+		</dependency>
   </dependencies>
   <build>
     <plugins>

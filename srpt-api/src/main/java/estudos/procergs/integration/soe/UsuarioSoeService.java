@@ -13,8 +13,14 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.procergs.util.autentica.Autentica;
+import com.procergs.util.autentica.LogonED;
+import com.procergs.util.autentica.SessionED;
+import com.procergs.util.exception.ProcergsINTException;
 
+import estudos.procergs.infra.excecao.NaoAutorizadoException;
 import estudos.procergs.infra.framework.SOEAuthClient;
+import estudos.procergs.infra.interceptor.AutorizacaoRepository;
 import estudos.procergs.util.TextoUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -34,7 +40,10 @@ public class UsuarioSoeService {
   private String soeAuthSecret;
 
   @Inject
-  private SOEAuthClient soeAuthClient; 
+  private SOEAuthClient soeAuthClient;
+
+  @Inject
+  private AutorizacaoRepository autorizacaoRepository;
 
   private final static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -99,5 +108,44 @@ public class UsuarioSoeService {
       e.printStackTrace();
       return null;
     }
+  }
+
+  public SessionED autenticar(String matricula, String senha) {
+    try {       
+      LogonED logonED = new LogonED();
+      logonED.setTipoAutenticacao(LogonED.AUT_POR_MATRICULA);
+      logonED.setOrganizacao("PROCERGS");
+      logonED.setMatricula(Long.valueOf(matricula).longValue());
+      logonED.setSenha(senha);
+      
+      SessionED session = new Autentica().logon(logonED);
+      
+      return session;
+        
+    } catch (ProcergsINTException e) {
+      throw new NaoAutorizadoException(e.getMensagem());
+      
+    } catch (Exception e) {
+      throw new NaoAutorizadoException(e.getMessage());
+    }
+  }
+
+  public void verificarLogin(String chave) {
+    if (StringUtils.isBlank(chave)) {
+            throw new NaoAutorizadoException("Usuário, senha e IP não informados.");
+        }
+        chave = chave.substring(7); // Remove a string "Bearier " da chave
+        String[] loginSenhaIp = chave.split(":");
+        String login = loginSenhaIp[0];
+        String senha = loginSenhaIp[1];
+        SessionED session = this.autenticar(login, senha);
+        if (session == null) {
+            throw new NaoAutorizadoException("Usuário e senha não encontrados.");
+        }  
+        if (loginSenhaIp.length < 3) {
+            throw new NaoAutorizadoException("IP não informado.");
+        }
+        String ip = loginSenhaIp[2];
+        autorizacaoRepository.incluirAutorizacao(session, ip);
   }
 }
