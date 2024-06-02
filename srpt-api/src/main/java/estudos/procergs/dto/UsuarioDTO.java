@@ -9,7 +9,9 @@ public class UsuarioDTO {
     
     private Long id;
 
-    private String login;
+    private Long matricula;
+
+    private String nome;
 
     private String senha;
 

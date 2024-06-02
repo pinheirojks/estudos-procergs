@@ -20,9 +20,13 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
         List<String> clausulas = new ArrayList<>();
         Map<String, Object> parametros = new HashMap<String, Object>();
 
-        if (pesq.getLogin() != null) {
-            clausulas.add("login like :login");
-            parametros.put("login", "%" + pesq.getLogin() + "%");
+        if (pesq.getMatricula() != null) {
+            clausulas.add("matricula = :matricula");
+            parametros.put("matricula", pesq.getMatricula());
+        }
+        if (pesq.getNome() != null) {
+            clausulas.add("nome like :nome");
+            parametros.put("nome", "%" + pesq.getNome() + "%");
         }
         if (pesq.getAtivo() != null) {
             clausulas.add("ativo = :ativo");
@@ -31,20 +35,20 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
         String restricoes = clausulas.stream()
                 .collect(Collectors.joining(" and "));
 
-        Sort ordenacao = Sort.ascending("login");
+        Sort ordenacao = Sort.ascending("nome");
         PanacheQuery<Usuario> query = this.find(restricoes, ordenacao, parametros);
 
         return query.list();
     }
 
-    public Usuario consultar(String login, String senha) {
+    public Usuario consultar(Long matricula, String senha) {
         try {
             List<String> clausulas = new ArrayList<>();
 
             Map<String, Object> parametros = new HashMap<String, Object>();
 
-            clausulas.add("login = :login");
-            parametros.put("login", login);
+            clausulas.add("matricula = :matricula");
+            parametros.put("matricula", matricula);
 
             clausulas.add("senha = :senha");
             parametros.put("senha", senha);
@@ -63,10 +67,10 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
         }
     }
 
-    public List<Usuario> listarDuplicados(String login) {
+    public List<Usuario> listarDuplicados(Long matricula) {
         Usuario pesq = new Usuario();
         pesq.setAtivo(true);
-        pesq.setLogin(login);
+        pesq.setMatricula(matricula);
         return this.listar(pesq);
     }
 }

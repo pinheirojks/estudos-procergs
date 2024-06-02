@@ -42,7 +42,7 @@ public class UsuarioResource {
     private UsuarioMapper usuarioMapper;
 
     @GET
-    @Operation(description = "Lista os usuários pesquisando por login e ativo")
+    @Operation(description = "Lista os usuários pesquisando por matricula, nome e ativo")
     public List<UsuarioDTO> listar(@BeanParam UsuarioPesqDTO dto) {
         Usuario pesq = usuarioMapper.paraUsuario(dto);        
         return usuarioService.listar(pesq).stream()

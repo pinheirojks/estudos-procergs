@@ -41,7 +41,8 @@ public abstract class UsuarioServiceTest {
     protected Usuario criarUsuario(Long id) {
         Usuario usuario = new Usuario();
         usuario.setId(id);
-        usuario.setLogin("usuario" + id.toString());
+        usuario.setMatricula(id);
+        usuario.setNome("usuario" + id.toString());
         usuario.setSenha("usuario" + id.toString());
         usuario.setPerfil(PerfilUsuarioEnum.ADMINISTRADOR);
         usuario.setAtivo(true);
@@ -64,7 +65,7 @@ public abstract class UsuarioServiceTest {
 
     protected void mocarUsuariosDuplicados() {
         List<Usuario> usuariosDuplicados = usuariosCadastrados.stream()
-            .filter(u -> u.getLogin().equalsIgnoreCase(usuarioInformado.getLogin()))
+            .filter(u -> u.getMatricula().equals(usuarioInformado.getMatricula()))
             .toList();
 
         Mockito.when(usuarioRepositoryMock.listarDuplicados(Mockito.any())).thenReturn(usuariosDuplicados);

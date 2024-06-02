@@ -33,8 +33,8 @@ public class UsuarioService extends AbstractService {
         return usuarioRepository.findById(id);
     }
 
-    public Usuario consultar(String login, String senha) {
-        return usuarioRepository.consultar(login, senha);
+    public Usuario consultar(Long matricula, String senha) {
+        return usuarioRepository.consultar(matricula, senha);
     }
 
     public Usuario consultarUsuarioSistema() {
@@ -44,7 +44,8 @@ public class UsuarioService extends AbstractService {
     @Transactional
     public Usuario incluir(Usuario usuario) {
         this.verificarPermicoes();
-        this.exigirString(usuario.getLogin(), "Informe o login.");
+        this.exigir(usuario.getMatricula(), "Informe a matrícula.");
+        this.exigirString(usuario.getNome(), "Informe o nome.");
         this.exigirString(usuario.getSenha(), "Informe a senha.");
         this.exigir(usuario.getPerfil(), "Informe o perfil.");
         this.proibirDuplicacao(usuario);
@@ -58,7 +59,8 @@ public class UsuarioService extends AbstractService {
     public Usuario alterar(Long id, Usuario u) {
         this.verificarPermicoes();
         this.exigir(u.getId(), "Informe o ID.");
-        this.exigirString(u.getLogin(), "Informe o login.");
+        this.exigir(u.getMatricula(), "Informe a matrícula.");
+        this.exigirString(u.getNome(), "Informe o nome.");
         this.exigirString(u.getSenha(), "Informe a senha.");
         this.exigir(u.getPerfil(), "Informe o perfil.");
         this.exigir(u.getAtivo(), "Informe se está ativo.");
@@ -66,7 +68,8 @@ public class UsuarioService extends AbstractService {
 
         Usuario usuario = usuarioRepository.findById(id);
 
-        usuario.setLogin(u.getLogin());
+        usuario.setMatricula(u.getMatricula());
+        usuario.setNome(u.getNome());
         usuario.setSenha(u.getSenha());
         usuario.setPerfil(u.getPerfil());
         usuario.setAtivo(u.getAtivo());
@@ -86,26 +89,26 @@ public class UsuarioService extends AbstractService {
             throw new NaoAutorizadoException("Usuário, senha e IP não informados.");
         }
         chave = chave.substring(7); // Remove a string "Bearier " da chave
-        String[] loginSenhaIp = chave.split(":");
-        String login = loginSenhaIp[0];
-        String senha = loginSenhaIp[1];
-        Usuario usuario = this.consultar(login, senha);
+        String[] matriculaSenhaIp = chave.split(":");
+        Long matricula = Long.valueOf(matriculaSenhaIp[0]);
+        String senha = matriculaSenhaIp[1];
+        Usuario usuario = this.consultar(matricula, senha);
         if (usuario == null) {
             throw new NaoAutorizadoException("Usuário e senha não encontrados.");
         }  
-        if (loginSenhaIp.length < 3) {
+        if (matriculaSenhaIp.length < 3) {
             throw new NaoAutorizadoException("IP não informado.");
         }
-        String ip = loginSenhaIp[2];
+        String ip = matriculaSenhaIp[2];
         autorizacaoRepository.incluirAutorizacao(usuario, ip);
     }
 
     private void proibirDuplicacao(Usuario usuario) {
-        usuarioRepository.listarDuplicados(usuario.getLogin()).stream()
+        usuarioRepository.listarDuplicados(usuario.getMatricula()).stream()
             .filter(u -> !u.getId().equals(usuario.getId()))  //Para não considerar a propria entidade numa alteracao
             .findAny()
             .ifPresent(u -> {
-                throw new WebApplicationException("Login já cadastrado.");
+                throw new WebApplicationException("Matrícula já cadastrada.");
             });
     }
 

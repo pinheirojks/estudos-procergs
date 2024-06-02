@@ -43,18 +43,18 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
 
     @Test
     @Order(2)
-    @DisplayName("Nao deve alterar com duplicacao")
-    public void naoDeveAlterarComDuplicacao() {
+    @DisplayName("Nao deve alterar com matricula duplicada")
+    public void naoDeveAlterarComMatriculaDuplicada() {
         this.inicializar();
 
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L);  
-        usuarioInformado.setLogin("usuario1");
+        usuarioInformado.setMatricula(1L);
 
         this.mocarUsuariosDuplicados();
         this.tentarAlterar();
-        this.verificarErroRegraNegocio("Login já cadastrado.");
+        this.verificarErroRegraNegocio("Matrícula já cadastrada.");
     }
 
     @Test
@@ -74,22 +74,38 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
 
     @Test
     @Order(4)
-    @DisplayName("Nao deve alterar sem login")
-    public void naoDeveAlterarSemLogin() {
+    @DisplayName("Nao deve alterar sem matricula")
+    public void naoDeveAlterarSemMatricula() {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L);
-        usuarioInformado.setLogin(null);
+        usuarioInformado.setMatricula(null);
         
         this.mocarConsulta(usuarioInformado.getId());
         this.mocarUsuariosDuplicados();
         this.tentarAlterar();
-        this.verificarErroRegraNegocio("Informe o login.");
+        this.verificarErroRegraNegocio("Informe a matrícula.");
     }
 
     @Test
     @Order(5)
+    @DisplayName("Nao deve alterar sem nome")
+    public void naoDeveAlterarSemNome() {
+        this.inicializar();
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
+
+        usuarioInformado = this.criarUsuario(2L);
+        usuarioInformado.setNome(null);
+        
+        this.mocarConsulta(usuarioInformado.getId());
+        this.mocarUsuariosDuplicados();
+        this.tentarAlterar();
+        this.verificarErroRegraNegocio("Informe o nome.");
+    }
+
+    @Test
+    @Order(6)
     @DisplayName("Nao deve alterar sem senha")
     public void naoDeveAlterarSemSenha() {
         this.inicializar();
@@ -105,7 +121,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     @DisplayName("Nao deve alterar sem perfil")
     public void naoDeveAlterarSemPerfil() {
         this.inicializar();
@@ -121,7 +137,7 @@ public class UsuarioServiceAlteracaoTest extends UsuarioServiceTest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     @DisplayName("Nao deve alterar com funcionario logado")
     public void naoDeveAlterarComFuncionarioLogado() {
         this.inicializar();

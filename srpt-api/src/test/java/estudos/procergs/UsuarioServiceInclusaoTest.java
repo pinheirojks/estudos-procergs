@@ -43,8 +43,8 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
 
     @Test
     @Order(2)
-    @DisplayName("Nao deve incluir com duplicacao")
-    public void naoDeveIncluirComDuplicacao() {
+    @DisplayName("Nao deve incluir com matricula duplicada")
+    public void naoDeveIncluirComMatriculaDuplicada() {
         this.inicializar();
 
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
@@ -54,27 +54,43 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
 
         this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarErroRegraNegocio("Login já cadastrado.");
+        this.verificarErroRegraNegocio("Matrícula já cadastrada.");
     }
 
     @Test
     @Order(3)
-    @DisplayName("Nao deve incluir sem login")
-    public void naoDeveIncluirSemLogin() {
+    @DisplayName("Nao deve incluir sem matricula")
+    public void naoDeveIncluirSemMatricula() {
         this.inicializar();
         Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
 
         usuarioInformado = this.criarUsuario(2L);  
         usuarioInformado.setId(null);
-        usuarioInformado.setLogin(null);
+        usuarioInformado.setMatricula(null);
         
         this.mocarUsuariosDuplicados();
         this.tentarIncluir();
-        this.verificarErroRegraNegocio("Informe o login.");
+        this.verificarErroRegraNegocio("Informe a matrícula.");
     }
 
     @Test
     @Order(4)
+    @DisplayName("Nao deve incluir sem nome")
+    public void naoDeveIncluirSemNome() {
+        this.inicializar();
+        Mockito.when(autorizacaoRepositoryMock.getAutorizacao()).thenReturn(this.criarAutorizacao(PerfilUsuarioEnum.ADMINISTRADOR));
+
+        usuarioInformado = this.criarUsuario(2L);  
+        usuarioInformado.setId(null);
+        usuarioInformado.setNome(null);
+        
+        this.mocarUsuariosDuplicados();
+        this.tentarIncluir();
+        this.verificarErroRegraNegocio("Informe o nome.");
+    }
+
+    @Test
+    @Order(5)
     @DisplayName("Nao deve incluir sem senha")
     public void naoDeveIncluirSemSenha() {
         this.inicializar();
@@ -90,7 +106,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     @DisplayName("Nao deve incluir sem perfil")
     public void naoDeveIncluirSemPerfil() {
         this.inicializar();
@@ -106,7 +122,7 @@ public class UsuarioServiceInclusaoTest extends UsuarioServiceTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     @DisplayName("Nao deve incluir com funcionario logado")
     public void naoDeveIncluirComFuncionarioLogado() {
         this.inicializar();

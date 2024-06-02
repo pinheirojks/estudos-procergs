@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "estacao_trabalho")
+@Table(name = "srpt_estacao_trabalho")
 public class EstacaoTrabalho extends PanacheEntityBase {
 
     @Id

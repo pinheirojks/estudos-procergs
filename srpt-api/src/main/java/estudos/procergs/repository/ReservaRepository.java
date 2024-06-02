@@ -108,7 +108,7 @@ public class ReservaRepository implements PanacheRepository<Reserva> {
         }
 
         ordens.add(builder.asc(reserva.get("data")));
-        ordens.add(builder.asc(usuario.get("login")));
+        ordens.add(builder.asc(usuario.get("nome")));
         return ordens;
     }
 

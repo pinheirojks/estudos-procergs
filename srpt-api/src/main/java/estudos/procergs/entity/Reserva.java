@@ -21,7 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "reserva")
+@Table(name = "srpt_reserva")
 @EntityListeners(value = ReservaListener.class)
 public class Reserva extends AbstractEntity {
 

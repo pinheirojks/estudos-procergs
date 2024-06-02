@@ -19,14 +19,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "usuario")
+@Table(name = "srpt_usuario")
 public class Usuario extends PanacheEntityBase {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    private String login;
+    private Long matricula;
+
+    private String nome;
 
     private String senha;
 
