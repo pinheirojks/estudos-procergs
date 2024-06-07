@@ -22,6 +22,6 @@ public class AutorizacaoRequestFilter implements ContainerRequestFilter {
   public void filter(ContainerRequestContext requestContext) throws IOException {
     String chave = requestContext.getHeaderString("Authorization");
     usuarioService.verificarLogin(chave);
-    // usuarioSoeService.verificarLogin(chave);
+    //usuarioSoeService.verificarLogin(chave);
   }
 }

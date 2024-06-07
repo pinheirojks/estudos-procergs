@@ -129,6 +129,11 @@
 			<version>1.10.6</version>
 			<scope>provided</scope>
 		</dependency>
+    <dependency>
+			<groupId>com.procergs.acr</groupId>
+			<artifactId>PRArqjava-core</artifactId>
+			<version>1.16.2</version>
+		</dependency>
   </dependencies>
   <build>
     <plugins>

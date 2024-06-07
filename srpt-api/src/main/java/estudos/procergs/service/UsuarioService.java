@@ -3,6 +3,7 @@ package estudos.procergs.service;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
@@ -10,6 +11,8 @@ import estudos.procergs.infra.excecao.NaoAutorizadoException;
 import estudos.procergs.infra.excecao.NaoPermitidoException;
 import estudos.procergs.infra.framework.AbstractService;
 import estudos.procergs.infra.interceptor.AutorizacaoRepository;
+import estudos.procergs.integration.cpon.UsuarioCpon;
+import estudos.procergs.integration.cpon.UsuarioCponService;
 import estudos.procergs.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -25,6 +28,12 @@ public class UsuarioService extends AbstractService {
     @Inject
     private AutorizacaoRepository autorizacaoRepository;
 
+    @Inject
+    private UsuarioCponService usuarioCponService;
+
+    @ConfigProperty(name = "autenticacao.cpon.soe.habilitada")
+    private String autenticacaoSoeHabilitada;
+
     public List<Usuario> listar(Usuario pesq) {
         return usuarioRepository.listar(pesq);
     }
@@ -37,8 +46,12 @@ public class UsuarioService extends AbstractService {
         return usuarioRepository.consultar(matricula, senha);
     }
 
+    public Usuario consultarMatricula(Long matricula) {
+        return usuarioRepository.consultar(matricula);
+    }
+
     public Usuario consultarUsuarioSistema() {
-       return consultar(1L);
+        return consultar(1L);
     }
 
     @Transactional
@@ -92,29 +105,44 @@ public class UsuarioService extends AbstractService {
         String[] matriculaSenhaIp = chave.split(":");
         Long matricula = Long.valueOf(matriculaSenhaIp[0]);
         String senha = matriculaSenhaIp[1];
-        Usuario usuario = this.consultar(matricula, senha);
-        if (usuario == null) {
-            throw new NaoAutorizadoException("Usuário e senha não encontrados.");
-        }  
         if (matriculaSenhaIp.length < 3) {
             throw new NaoAutorizadoException("IP não informado.");
         }
         String ip = matriculaSenhaIp[2];
-        autorizacaoRepository.incluirAutorizacao(usuario, ip);
+
+        if ("S".equalsIgnoreCase(autenticacaoSoeHabilitada)) {
+            UsuarioCpon usuarioCpon = usuarioCponService.autenticar(matricula, senha, ip);
+            if (usuarioCpon == null) {
+                throw new NaoAutorizadoException("Usuário e senha não encontrados no SOE.");
+            }
+            Usuario usuario = this.consultarMatricula(matricula);
+            if (usuario == null) {
+                throw new NaoAutorizadoException("Matrícula não cadastrada no sistema.");
+            }
+            autorizacaoRepository.incluirAutorizacao(usuario, ip);
+
+        } else {
+            Usuario usuario = this.consultar(matricula, senha);
+            if (usuario == null) {
+                throw new NaoAutorizadoException("Matrícula e senha não cadastradas no sistema.");
+            }
+            autorizacaoRepository.incluirAutorizacao(usuario, ip);
+        }
     }
 
     private void proibirDuplicacao(Usuario usuario) {
         usuarioRepository.listarDuplicados(usuario.getMatricula()).stream()
-            .filter(u -> !u.getId().equals(usuario.getId()))  //Para não considerar a propria entidade numa alteracao
-            .findAny()
-            .ifPresent(u -> {
-                throw new WebApplicationException("Matrícula já cadastrada.");
-            });
+                .filter(u -> !u.getId().equals(usuario.getId())) // Para não considerar a propria entidade numa
+                                                                 // alteracao
+                .findAny()
+                .ifPresent(u -> {
+                    throw new WebApplicationException("Matrícula já cadastrada.");
+                });
     }
 
     private void verificarPermicoes() {
         Usuario usuarioLogado = autorizacaoRepository.getAutorizacao().getUsuario();
-        if(!PerfilUsuarioEnum.ADMINISTRADOR.equals(usuarioLogado.getPerfil())) {
+        if (!PerfilUsuarioEnum.ADMINISTRADOR.equals(usuarioLogado.getPerfil())) {
             throw new NaoPermitidoException("Usuário sem permissão para esta operação.");
         }
     }

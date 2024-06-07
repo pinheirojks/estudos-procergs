@@ -67,6 +67,29 @@ public class UsuarioRepository implements PanacheRepository<Usuario> {
         }
     }
 
+    public Usuario consultar(Long matricula) {
+        try {
+            List<String> clausulas = new ArrayList<>();
+
+            Map<String, Object> parametros = new HashMap<String, Object>();
+
+            clausulas.add("matricula = :matricula");
+            parametros.put("matricula", matricula);
+
+            clausulas.add("ativo = :ativo");
+            parametros.put("ativo", true);
+
+            String restricoes = clausulas.stream()
+                    .collect(Collectors.joining(" and "));
+
+            PanacheQuery<Usuario> query = this.find(restricoes, parametros);
+            return query.singleResult();
+
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
     public List<Usuario> listarDuplicados(Long matricula) {
         Usuario pesq = new Usuario();
         pesq.setAtivo(true);
