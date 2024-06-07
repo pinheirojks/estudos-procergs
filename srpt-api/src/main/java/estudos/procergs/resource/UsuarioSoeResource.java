@@ -40,7 +40,7 @@ public class UsuarioSoeResource {
         @QueryParam(value = "matricula") Long matricula, 
         @QueryParam(value = "nome") String nome) {
 
-        return usuarioSoeService.listar(siglaOrgao, matricula, nome);
+        return usuarioSoeService.listar(siglaOrgao, matricula, nome, null);
     }
 
     @GET

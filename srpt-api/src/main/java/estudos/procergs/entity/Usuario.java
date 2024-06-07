@@ -32,6 +32,9 @@ public class Usuario extends PanacheEntityBase {
 
     private String senha;
 
+    @Column(name = "sigla_setor")
+    private String siglaSetor;
+
     @Column(name = "perfil", columnDefinition = "varchar(100)")
     @Enumerated(EnumType.STRING)
     private PerfilUsuarioEnum perfil;

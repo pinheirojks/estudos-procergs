@@ -48,7 +48,7 @@ public class UsuarioSoeService {
 
   private final static ObjectMapper objectMapper = new ObjectMapper();
 
-  public List<UsuarioSoe> listar(String siglaOrgao, Long matricula, String nome) {
+  public List<UsuarioSoe> listar(String siglaOrgao, Long matricula, String nome, String siglaSetor) {
     
     StringBuilder urlConexao = new StringBuilder(urlSoe.concat("/usuarios"));
 
@@ -64,6 +64,10 @@ public class UsuarioSoeService {
     if (StringUtils.isNotBlank(nome)) {
       nome = TextoUtil.removerAcentos(nome); //Necessário remover acentos, pois causam erro no servico. Além disso, a pesquisa sem acentos encontra palavras com acentos
       urlConexao.append("&nomeUsuario=").append("*").append(nome).append("*");
+    }
+    if (StringUtils.isNotBlank(siglaSetor)) {
+      nome = TextoUtil.removerAcentos(siglaSetor); 
+      urlConexao.append("&siglaSetor=").append("*").append(siglaSetor).append("*");
     }
     
     try {

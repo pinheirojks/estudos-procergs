@@ -13,6 +13,8 @@ import estudos.procergs.infra.framework.AbstractService;
 import estudos.procergs.infra.interceptor.AutorizacaoRepository;
 import estudos.procergs.integration.cpon.UsuarioCpon;
 import estudos.procergs.integration.cpon.UsuarioCponService;
+import estudos.procergs.integration.soe.UsuarioSoe;
+import estudos.procergs.integration.soe.UsuarioSoeService;
 import estudos.procergs.repository.UsuarioRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -29,7 +31,10 @@ public class UsuarioService extends AbstractService {
     private AutorizacaoRepository autorizacaoRepository;
 
     @Inject
-    private UsuarioCponService usuarioCponService;
+    private UsuarioCponService usuarioCponService;   
+
+    @Inject
+    private UsuarioSoeService usuarioSoeService;
 
     @ConfigProperty(name = "autenticacao.cpon.soe.habilitada")
     private String autenticacaoSoeHabilitada;
@@ -146,4 +151,34 @@ public class UsuarioService extends AbstractService {
             throw new NaoPermitidoException("Usuário sem permissão para esta operação.");
         }
     }
+
+    @Transactional
+    public Long importarNovosUsuariosSOE() {
+        Usuario pesq = new Usuario();
+        pesq.setAtivo(true);
+        List<Usuario> usuariosAtivos = this.listar(pesq);
+
+        List<UsuarioSoe> usuariosSoeNovos = usuarioSoeService.listar("PROCERGS", null, null, "AF1").stream()
+            .filter(usuarioSoe -> usuariosAtivos.stream().noneMatch(usuario -> usuario.getMatricula().equals(usuarioSoe.getMatricula())))
+            .toList();
+
+        usuariosSoeNovos.stream()
+            .map(this::criarUsuario)
+            .forEach(usuarioRepository::persist);
+
+        return Long.valueOf(usuariosSoeNovos.size());
+    }
+
+    private Usuario criarUsuario(UsuarioSoe usuarioSoe) {
+        Usuario usuario = new Usuario();
+        usuario.setMatricula(usuarioSoe.getMatricula());
+        usuario.setNome(usuarioSoe.getNomeUsuario());
+        usuario.setSenha(null);
+        usuario.setSiglaSetor(usuarioSoe.getSiglaSetor());
+        usuario.setPerfil(PerfilUsuarioEnum.FUNCIONARIO);
+        usuario.setAtivo(true);
+        return usuario;
+    }
+
+
 }
