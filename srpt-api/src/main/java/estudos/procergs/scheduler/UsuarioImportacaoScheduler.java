@@ -26,8 +26,8 @@ public class UsuarioImportacaoScheduler {
     @Inject
     private AutorizacaoRepository autorizacaoRepository;
 
-    //@Scheduled(cron = "59 59 22 * * ?") 
-    @Scheduled(cron = "0 19 20 * * ?") 
+    @Scheduled(cron = "59 59 22 * * ?") 
+    //@Scheduled(cron = "0 19 20 * * ?") 
     public void excluirReservasCanceladas(ScheduledExecution execution) {
         try {
             if (!"S".equalsIgnoreCase(rotinasHabilitadas)) {
