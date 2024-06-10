@@ -15,5 +15,5 @@ public class EstacaoTrabalhoPesqDTO {
     private Boolean ativo;
 
     @QueryParam(value = "tipo")
-    private String tipo;
+    private Integer codigoTipo;
 }

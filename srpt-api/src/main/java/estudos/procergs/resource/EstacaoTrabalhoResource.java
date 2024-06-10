@@ -12,7 +12,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import estudos.procergs.dto.EstacaoTrabalhoDTO;
 import estudos.procergs.dto.EstacaoTrabalhoPesqDTO;
 import estudos.procergs.entity.EstacaoTrabalho;
-import estudos.procergs.enums.TipoEstacaoTrabalhoEnum;
 import estudos.procergs.infra.interceptor.AutorizacaoInterceptor;
 import estudos.procergs.mapper.EstacaoTrabalhoMapper;
 import estudos.procergs.service.EstacaoTrabalhoService;
@@ -48,7 +47,6 @@ public class EstacaoTrabalhoResource {
     @Operation(description = "Lista as estações de trabalho pesquisando por código, tipo e ativo")
     public List<EstacaoTrabalhoDTO> listar(@BeanParam EstacaoTrabalhoPesqDTO dto) {
         EstacaoTrabalho pesq = estacaoTrabalhoMapper.paraEstacaoTrabalho(dto);
-        pesq.setTipo(TipoEstacaoTrabalhoEnum.parseByName(dto.getTipo()));
         return estacaoTrabalhoService.listar(pesq).stream()
                 .map(estacao -> estacaoTrabalhoMapper.paraDTO(estacao))
                 .toList();

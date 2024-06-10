@@ -3,9 +3,8 @@ package estudos.procergs.entity;
 import estudos.procergs.enums.TipoEstacaoTrabalhoEnum;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -24,8 +23,8 @@ public class EstacaoTrabalho extends PanacheEntityBase {
 
     private String codigo;
 
-    @Column(name = "tipo", columnDefinition = "varchar(100)")
-    @Enumerated(EnumType.STRING)
+    @Column(name = "codigo_tipo")
+    @Convert(converter = TipoEstacaoTrabalhoEnum.Converter.class)
     private TipoEstacaoTrabalhoEnum tipo;
 
     private Boolean ativo;

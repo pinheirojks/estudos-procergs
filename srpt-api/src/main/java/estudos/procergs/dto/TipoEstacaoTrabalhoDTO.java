@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TipoEstacaoTrabalhoDTO {
 
-    private String nome;
+    private Integer codigo;
 
     private String descricao;
 }
