@@ -1,15 +1,17 @@
 package estudos.procergs.service;
 
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+import estudos.procergs.dto.AutenticacaoDTO;
 import estudos.procergs.entity.Usuario;
 import estudos.procergs.enums.PerfilUsuarioEnum;
 import estudos.procergs.infra.excecao.NaoAutorizadoException;
 import estudos.procergs.infra.excecao.NaoPermitidoException;
 import estudos.procergs.infra.framework.AbstractService;
+import estudos.procergs.infra.interceptor.AutorizacaoDTO;
 import estudos.procergs.infra.interceptor.AutorizacaoRepository;
 import estudos.procergs.integration.cpon.UsuarioCpon;
 import estudos.procergs.integration.cpon.UsuarioCponService;
@@ -31,7 +33,10 @@ public class UsuarioService extends AbstractService {
     private AutorizacaoRepository autorizacaoRepository;
 
     @Inject
-    private UsuarioCponService usuarioCponService;   
+    private UsuarioCponService usuarioCponService;
+
+    @Inject
+    private TokenService tokenService;
 
     @Inject
     private UsuarioSoeService usuarioSoeService;
@@ -102,39 +107,6 @@ public class UsuarioService extends AbstractService {
         usuarioRepository.delete(usuario);
     }
 
-    public void verificarLogin(String chave) {
-        if (StringUtils.isBlank(chave)) {
-            throw new NaoAutorizadoException("Usuário, senha e IP não informados.");
-        }
-        chave = chave.substring(7); // Remove a string "Bearier " da chave
-        String[] matriculaSenhaIp = chave.split(":");
-        Long matricula = Long.valueOf(matriculaSenhaIp[0]);
-        String senha = matriculaSenhaIp[1];
-        if (matriculaSenhaIp.length < 3) {
-            throw new NaoAutorizadoException("IP não informado.");
-        }
-        String ip = matriculaSenhaIp[2];
-
-        if ("S".equalsIgnoreCase(autenticacaoSoeHabilitada)) {
-            UsuarioCpon usuarioCpon = usuarioCponService.autenticar(matricula, senha, ip);
-            if (usuarioCpon == null) {
-                throw new NaoAutorizadoException("Usuário e senha não encontrados no SOE.");
-            }
-            Usuario usuario = this.consultarMatricula(matricula);
-            if (usuario == null) {
-                throw new NaoAutorizadoException("Matrícula não cadastrada no sistema.");
-            }
-            autorizacaoRepository.incluirAutorizacao(usuario, ip);
-
-        } else {
-            Usuario usuario = this.consultar(matricula, senha);
-            if (usuario == null) {
-                throw new NaoAutorizadoException("Matrícula e senha não cadastradas no sistema.");
-            }
-            autorizacaoRepository.incluirAutorizacao(usuario, ip);
-        }
-    }
-
     private void proibirDuplicacao(Usuario usuario) {
         usuarioRepository.listarDuplicados(usuario.getMatricula()).stream()
                 .filter(u -> !u.getId().equals(usuario.getId())) // Para não considerar a propria entidade numa
@@ -159,12 +131,13 @@ public class UsuarioService extends AbstractService {
         List<Usuario> usuariosAtivos = this.listar(pesq);
 
         List<UsuarioSoe> usuariosSoeNovos = usuarioSoeService.listar("PROCERGS", null, null, "AF1").stream()
-            .filter(usuarioSoe -> usuariosAtivos.stream().noneMatch(usuario -> usuario.getMatricula().equals(usuarioSoe.getMatricula())))
-            .toList();
+                .filter(usuarioSoe -> usuariosAtivos.stream()
+                        .noneMatch(usuario -> usuario.getMatricula().equals(usuarioSoe.getMatricula())))
+                .toList();
 
         usuariosSoeNovos.stream()
-            .map(this::criarUsuario)
-            .forEach(usuarioRepository::persist);
+                .map(this::criarUsuario)
+                .forEach(usuarioRepository::persist);
 
         return Long.valueOf(usuariosSoeNovos.size());
     }
@@ -180,5 +153,33 @@ public class UsuarioService extends AbstractService {
         return usuario;
     }
 
+    public AutorizacaoDTO autenticar(AutenticacaoDTO dto) {
+        this.exigir(dto.getMatricula(), "Informe a matrícula.");
+        this.exigirString(dto.getSenha(), "Informe a senha.");
+        this.exigirString(dto.getIp(), "Informe o IP.");
 
+        if ("S".equalsIgnoreCase(autenticacaoSoeHabilitada)) {
+            UsuarioCpon usuarioCpon = usuarioCponService.autenticar(dto.getMatricula(), dto.getSenha(), dto.getIp());
+            if (Objects.isNull(usuarioCpon)) {
+                throw new NaoAutorizadoException("Usuário e senha não encontrados no SOE.");
+            }
+        }
+        Usuario usuario = this.consultarMatricula(dto.getMatricula());
+        if (Objects.isNull(usuario)) {
+            throw new NaoAutorizadoException("Matrícula não cadastrada no sistema.");
+        }
+        AutorizacaoDTO autorizacao = tokenService.adicionar(usuario, dto.getIp());
+        return autorizacao;
+    }
+
+    public void autorizar(String token) {
+        this.exigirString(token, "Informe o token.");
+        token = token.substring(7); // Remove a string "Bearier " do Token
+
+        AutorizacaoDTO autorizacao = tokenService.consultar(token);
+        if (Objects.isNull(autorizacao)) {
+            throw new NaoAutorizadoException("Token não encontrado no sistema.");
+        }
+        autorizacaoRepository.incluirAutorizacao(autorizacao);
+    }
 }

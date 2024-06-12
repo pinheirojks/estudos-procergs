@@ -1,8 +1,9 @@
 package estudos.procergs.scheduler;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
-import estudos.procergs.entity.Usuario;
+import estudos.procergs.infra.interceptor.AutorizacaoDTO;
 import estudos.procergs.infra.interceptor.AutorizacaoRepository;
 import estudos.procergs.service.ReservaService;
 import estudos.procergs.service.UsuarioService;
@@ -10,7 +11,6 @@ import io.quarkus.scheduler.Scheduled;
 import io.quarkus.scheduler.ScheduledExecution;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 @ApplicationScoped
 public class ReservaLimpezaScheduler {
@@ -51,7 +51,9 @@ public class ReservaLimpezaScheduler {
     }
 
     private void definirUsuariodeSistema() {
-        Usuario usuario = usuarioService.consultarUsuarioSistema();
-        autorizacaoRepository.incluirAutorizacao(usuario, "127.0.0.0");
+        AutorizacaoDTO autorizacao = new AutorizacaoDTO();
+        autorizacao.setUsuario(usuarioService.consultarUsuarioSistema());
+        autorizacao.setIp("127.0.0.0");
+        autorizacaoRepository.incluirAutorizacao(autorizacao);
     }
 }

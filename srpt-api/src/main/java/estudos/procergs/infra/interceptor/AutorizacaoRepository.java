@@ -2,7 +2,6 @@ package estudos.procergs.infra.interceptor;
 
 import com.procergs.util.autentica.SessionED;
 
-import estudos.procergs.entity.Usuario;
 import jakarta.enterprise.context.RequestScoped;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,10 +15,8 @@ public class AutorizacaoRepository {
 
     private SessionED session;
 
-    public void incluirAutorizacao(Usuario usuario, String ip) {
-        this.autorizacao = new AutorizacaoDTO();
-        this.autorizacao.setUsuario(usuario);
-        this.autorizacao.setIp(ip);
+    public void incluirAutorizacao(AutorizacaoDTO autorizacao) {
+        this.autorizacao = autorizacao;
     }
 
     public void incluirAutorizacao(SessionED session, String ip) {

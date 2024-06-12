@@ -11,4 +11,6 @@ public class AutorizacaoDTO {
     private Usuario usuario;
 
     private String ip;
+
+    private String token;
 }

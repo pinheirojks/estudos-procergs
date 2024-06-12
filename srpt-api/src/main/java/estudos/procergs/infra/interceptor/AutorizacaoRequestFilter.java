@@ -15,13 +15,9 @@ public class AutorizacaoRequestFilter implements ContainerRequestFilter {
   @Inject
   private UsuarioService usuarioService;
 
-  // @Inject
-  // private UsuarioSoeService usuarioSoeService;
-
   @Override
   public void filter(ContainerRequestContext requestContext) throws IOException {
-    String chave = requestContext.getHeaderString("Authorization");
-    usuarioService.verificarLogin(chave);
-    //usuarioSoeService.verificarLogin(chave);
+    String token = requestContext.getHeaderString("Authorization");
+    usuarioService.autorizar(token);
   }
 }
