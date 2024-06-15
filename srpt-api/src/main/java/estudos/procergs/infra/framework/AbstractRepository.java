@@ -23,12 +23,12 @@ public abstract class AbstractRepository<E extends AbstractEntity, P> implements
     }
 
     public E incluir(E entidade) {
-        entidade.persistAndFlush();
+        this.persistAndFlush(entidade);
         return entidade;
     }
 
     public E alterar(E entidade) {
-        entidade.persistAndFlush();
+        this.persistAndFlush(entidade);
         return entidade;
     }
 
