@@ -20,19 +20,19 @@ import jakarta.ws.rs.WebApplicationException;
 public class ReservaService extends AbstractService {
 
     @Inject
-    private ReservaRepository repository;
+    private ReservaRepository reservaRepository;
 
     public ReservaPagina listar(ReservaPesq pesq) {
         ReservaPagina pagina = new ReservaPagina();
-        pagina.setReservas(repository.listar(pesq));
-        pagina.setQuantidadeRegistros(repository.contar(pesq));
+        pagina.setReservas(reservaRepository.listar(pesq));
+        pagina.setQuantidadeRegistros(reservaRepository.contar(pesq));
         pagina.setNumeroPagina(pesq.getNumeroPagina());
         pagina.setTamanhoPagina(pesq.getTamanhoPagina());
         return pagina;
     }
 
     public Reserva consultar(Long id) {
-        return repository.findById(id);
+        return reservaRepository.consultar(id);
     }
 
     @Transactional
@@ -50,7 +50,7 @@ public class ReservaService extends AbstractService {
         this.proibirReagendamento(reserva);
 
         reserva.setCancelada(false);
-        repository.persist(reserva);
+        reservaRepository.incluir(reserva);
 
         return reserva;
     }
@@ -70,14 +70,14 @@ public class ReservaService extends AbstractService {
         this.validarUsuario(r);
         this.proibirReagendamento(r);
 
-        Reserva reserva = repository.findById(id);
+        Reserva reserva = reservaRepository.consultar(id);
 
         reserva.setUsuario(r.getUsuario());
         reserva.setData(r.getData());
         reserva.setEstacaoTrabalho(r.getEstacaoTrabalho());
         reserva.setTipo(r.getTipo());
 
-        return reserva;
+        return reservaRepository.alterar(reserva);
     }
 
     private void complementar(Reserva reserva) {
@@ -86,18 +86,19 @@ public class ReservaService extends AbstractService {
     }
     @Transactional
     public void cancelar(Long id){
-        Reserva reserva = repository.findById(id);
+        Reserva reserva = reservaRepository.consultar(id);
         reserva.setCancelada(true);
+        reservaRepository.alterar(reserva);
     }
 
     @Transactional
     public Long excluirReservasCanceladas() {
         ReservaPesq pesq = new ReservaPesq();
         pesq.setCancelada(true);
-        List<Reserva> reservas = repository.listar(pesq);
+        List<Reserva> reservas = reservaRepository.listar(pesq);
         Long quantidade = Long.valueOf(reservas.size());
         reservas.stream()
-            .forEach(reserva -> repository.delete(reserva));
+            .forEach(reserva -> reservaRepository.excluir(reserva.getId()));
         return quantidade;
     }
 
@@ -125,10 +126,8 @@ public class ReservaService extends AbstractService {
         this.proibirReagendamentoUsuario(r, reservasAtivasDaData);
     }
 
-    private List<Reserva> listarReservasAtivasDaData(LocalDate data) {
-        return repository.list("data", data).stream()
-        .filter(re -> !re.getCancelada()) 
-        .toList() ;
+    private List<Reserva> listarReservasAtivasDaData(LocalDate data) {        
+        return reservaRepository.listarReservasAtivasDaData(data);
     }
 
     private void proibirReagendamentoEstacao(Reserva reserva, List<Reserva> reservasAtivasDaData) {
